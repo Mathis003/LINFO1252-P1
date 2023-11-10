@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <stdbool.h>
-#include <unistd.h>
-
 
 typedef struct args_philosopher
 {
@@ -80,6 +78,13 @@ void *philosopher_function(void* arg)
 
 int main(int argc, char *argv[])
 {
+
+    if (argc != 2)
+    {
+        perror("argc != 2");
+        return EXIT_FAILURE;
+    }
+
     int nbThreads = atoi(argv[1]);
     const int NB_PHILOSOPHERS = nbThreads;
 
