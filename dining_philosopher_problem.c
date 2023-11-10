@@ -43,7 +43,7 @@ void philosopher_eating(int id, bool rightGreater, pthread_mutex_t *left_baguett
         pthread_mutex_lock(left_baguette);
     }
 
-    printf("Philosopher [%d] is eating\n", id);
+    // printf("Philosopher [%d] is eating\n", id);
 
     pthread_mutex_unlock(left_baguette);
     pthread_mutex_unlock(right_baguette);
@@ -52,7 +52,7 @@ void philosopher_eating(int id, bool rightGreater, pthread_mutex_t *left_baguett
 
 void philosopher_thinking(int id)
 {
-    printf("Philosopher [%d] is thinking.\n", id);
+    // printf("Philosopher [%d] is thinking.\n", id);
 }
 
 
@@ -65,7 +65,7 @@ void *philosopher_function(void* arg)
     pthread_mutex_t *left_baguette = arg_philosopher->left_baguette;
     pthread_mutex_t *right_baguette = arg_philosopher->right_baguette;
 
-    for (int i = 0; i < 10000000; i++)
+    for (int i = 0; i < 5; i++)
     {
         // Philosopher thinks
         philosopher_thinking(id);
