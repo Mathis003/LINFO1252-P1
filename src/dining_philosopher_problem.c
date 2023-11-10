@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
         if (pthread_create(&philosophers[i], NULL, &philosopher_function, args) != 0)
         {
             perror("pthread_create()");
+            for (int i = 0; i < NB_PHILOSOPHERS; i++) pthread_mutex_destroy(&baguettes[i]);
             return EXIT_FAILURE;
         }
     }
@@ -127,6 +128,16 @@ int main(int argc, char *argv[])
         if (pthread_join(philosophers[i], NULL) != 0)
         {
             perror("pthread_join()");
+            for (int i = 0; i < NB_PHILOSOPHERS; i++) pthread_mutex_destroy(&baguettes[i]);
+            return EXIT_FAILURE;
+        }
+    }
+
+    for (int i = 0; i < NB_PHILOSOPHERS; i++)
+    {
+        if (pthread_mutex_destroy(&baguettes[i]) != 0)
+        {
+            perror("pthread_mutex_destroy()");
             return EXIT_FAILURE;
         }
     }

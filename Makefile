@@ -1,17 +1,17 @@
 CC=gcc
-CFLAGS=-Wall -g -lpthread
+CFLAGS=-Wall -g -pthread
 
 all: philosopher producer_consumer
 
-philosopher: dining_philosopher_problem.c
-	@$(CC) $(CFLAGS) $< -o philosopher.out
+philosopher: src/dining_philosopher_problem.c
+	@$(CC) $(CFLAGS) $< -lpthread -o philosopher.out
 
-producer_consumer: producer_consumer.c
-	@$(CC) $(CFLAGS) $< -o producer_consumer.out
+producer_consumer: src/producer_consumer.c
+	@$(CC) $(CFLAGS) $< -lpthread -o producer_consumer.out
 
-run: philosopher producer_consumer
-	./philosopher.out
-	./producer_consumer.out
+run: src/get_results.bash src/plot_results.py
+	@bash src/get_results.bash
+	@python3 src/plot_results.py
 
 clean:
 	@rm -f philosopher.out producer_consumer.out

@@ -10,13 +10,12 @@
 #define MIN INT64_MIN
 #define MAX INT64_MAX
 
-int nbProductionsDone;
-int *buffer;
-int size_buffer;
-pthread_mutex_t mutex;
-sem_t empty;
-sem_t full;
+int buffer[CAPACITY_BUFFER];
+int nbProductionsDone = 0;
+int idx_buffer = 0;
 
+pthread_mutex_t mutex;
+sem_t empty, full;
 
 void treatment(void)
 {
@@ -25,12 +24,15 @@ void treatment(void)
 
 int produce(void)
 {
-    return rand() % MAX;
+    return rand() % 100;
+    // return rand() % MAX;
 }
 
 void insert_item(int item)
 {
-    buffer[size_buffer++] = item;
+    buffer[idx_buffer] = item;
+    idx_buffer++;
+    if (idx_buffer == CAPACITY_BUFFER) idx_buffer--;
 }
 
 void *producer(void *nbSteps)
@@ -40,6 +42,8 @@ void *producer(void *nbSteps)
     for (int i = 0; i < *nberRepet; i++)
     {
         item = produce();
+        // printf("Produced: %d\n", item);
+
         sem_wait(&empty);
         pthread_mutex_lock(&mutex);
 
@@ -55,20 +59,23 @@ void *producer(void *nbSteps)
 
 int remove_item()
 {
-    return buffer[size_buffer--];
+    idx_buffer--;
+    int item = buffer[idx_buffer];
+    return item;
 }
 
 void *consumer(void *args)
 {
     // int item;
-    while (nbProductionsDone != NB_PRODUCTIONS)
+    while (nbProductionsDone < NB_PRODUCTIONS)
     {
         sem_wait(&full);
         pthread_mutex_lock(&mutex);
         
-        remove_item();
         // item = remove_item();
+        remove_item();
         nbProductionsDone++;
+        // printf("Consumed: %d\n", item);
 
         pthread_mutex_unlock(&mutex);
         sem_post(&empty);
@@ -94,71 +101,101 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    buffer = (int *) malloc(CAPACITY_BUFFER * sizeof(int));
-    if (buffer == NULL)
-    {
-        perror("malloc()");
-        return EXIT_FAILURE;
-    }
-    size_buffer = 0;
-    nbProductionsDone = 0;
     if (pthread_mutex_init(&mutex, NULL) != 0)
     {
         perror("pthread_mutex_init()");
         return EXIT_FAILURE;
     }
-    sem_init(&empty, 0, CAPACITY_BUFFER);
-    sem_init(&full, 0, 0);
 
     pthread_t producers[nbProducers];
     pthread_t consumers[nbConsumers];
 
-    int nbSteps = NB_PRODUCTIONS / nbProducers;
+    sem_init(&empty, 0, CAPACITY_BUFFER);
+    sem_init(&full, 0, 0);
+
+    int *nbSteps = (int *) malloc(sizeof(int));
+    if (nbSteps == NULL)
+    {
+        perror("malloc()");
+        sem_destroy(&empty);
+        sem_destroy(&full);
+        pthread_mutex_destroy(&mutex);
+        return EXIT_FAILURE;
+    }
+
+    *nbSteps = NB_PRODUCTIONS / nbProducers;
     int rest = NB_PRODUCTIONS % nbProducers;
     if (rest != 0) nbSteps++;
-    int i;
 
+    int i;
     for (i = 0; i < nbProducers; i++)
     {
-        if (pthread_create(&producers[i], NULL, &producer, (void *) &nbSteps) != 0)
+        if (pthread_create(&producers[i], NULL, producer, (void *) nbSteps) != 0)
         {
             perror("pthread_create()");
+            sem_destroy(&empty);
+            sem_destroy(&full);
+            pthread_mutex_destroy(&mutex);
+            free(nbSteps);
             return EXIT_FAILURE;
         }
 
         rest--;
-        if (rest == 0) nbSteps--;
+        if (rest == 0) (*nbSteps)--;
     }
 
-    i = 0;
-    for (i = 0; i < nbConsumers; i++)
+    int j;
+    for (j = 0; j < nbConsumers; j++)
     {
-        if (pthread_create(&consumers[i], NULL, &consumer, NULL) != 0)
+        if (pthread_create(&consumers[j], NULL, consumer, NULL) != 0)
         {
             perror("pthread_create()");
+            sem_destroy(&empty);
+            sem_destroy(&full);
+            pthread_mutex_destroy(&mutex);
+            free(nbSteps);
             return EXIT_FAILURE;
         }
     }
 
-    i = 0;
-    for (i = 0; i < nbConsumers; i++)
+    int k;
+    for (k = 0; k < nbConsumers; k++)
     {
         if (pthread_join(consumers[i], NULL) != 0)
         {
             perror("pthread_join()");
+            sem_destroy(&empty);
+            sem_destroy(&full);
+            pthread_mutex_destroy(&mutex);
+            free(nbSteps);
             return EXIT_FAILURE;
         }
     }
 
-    i = 0;
-    for (i = 0; i < nbProducers; i++)
+    int l;
+    for (l = 0; l < nbProducers; l++)
     {
-        if (pthread_join(producers[i], NULL) != 0)
+        if (pthread_join(producers[l], NULL) != 0)
         {
             perror("pthread_join()");
+            sem_destroy(&empty);
+            sem_destroy(&full);
+            pthread_mutex_destroy(&mutex);
+            free(nbSteps);
             return EXIT_FAILURE;
         }
     }
 
+    free(nbSteps);
+    if (pthread_mutex_destroy(&mutex) != 0)
+    {
+        perror("pthread_mutex_destroy()");
+        sem_destroy(&empty);
+        sem_destroy(&full);
+        return EXIT_FAILURE;
+    }
+
+    sem_destroy(&empty);
+    sem_destroy(&full);
     return EXIT_SUCCESS;
 }
