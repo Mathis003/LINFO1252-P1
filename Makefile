@@ -1,21 +1,17 @@
 CC=gcc
 CFLAGS=-Wall -g -lpthread
-NB_THREADS=4
-TARGET=main.out
 
-ifdef THREADS
-    NB_THREADS = $(THREADS)
-else
-    NB_THREADS = 1
-endif
+all: philosopher producer_consumer
 
-all: $(TARGET)
+philosopher: dining_philosopher_problem.c
+	@$(CC) $(CFLAGS) $< -o philosopher.out
 
-$(TARGET): dining_philosopher_problem.c
-	$(CC) $(CFLAGS) -o $@ $<
+producer_consumer: producer_consumer.c
+	@$(CC) $(CFLAGS) $< -o producer_consumer.out
 
-run: $(TARGET)
-	${NB_THREADS} ./$(TARGET)
+run: philosopher producer_consumer
+	./philosopher.out
+	./producer_consumer.out
 
 clean:
-	rm -f $(TARGET)
+	@rm -f philosopher.out producer_consumer.out
