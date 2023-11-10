@@ -65,7 +65,7 @@ void *philosopher_function(void* arg)
     pthread_mutex_t *left_baguette = arg_philosopher->left_baguette;
     pthread_mutex_t *right_baguette = arg_philosopher->right_baguette;
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 10000000; i++)
     {
         // Philosopher thinks
         philosopher_thinking(id);
@@ -83,7 +83,11 @@ int main(int argc, char *argv[])
     int nbThreads = atoi(argv[1]);
     const int NB_PHILOSOPHERS = nbThreads;
 
-    if (NB_PHILOSOPHERS <= 0) return EXIT_FAILURE;
+    if (NB_PHILOSOPHERS <= 1)
+    {
+        perror("NB_PHILOSOPHERS <= 1");
+        return EXIT_FAILURE;
+    }
 
     pthread_t philosophers[NB_PHILOSOPHERS];
     pthread_mutex_t baguettes[NB_PHILOSOPHERS];

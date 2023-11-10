@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import pandas as pd
 
-data = pd.read_csv("mesures.csv")
+data = pd.read_csv("perfs.csv")
 nbThreads = data['NbThreads']
 data = data.drop(columns="NbThreads")
 
@@ -23,6 +23,6 @@ plt.xlabel('Number of Threads []')
 plt.ylabel('Execution Time [sec]')
 plt.legend()
 plt.grid()
-plt.savefig("perfs_compilation.png")
-plt.savefig("perfs_compilation.pdf")
+plt.savefig("perfs.png")
+plt.savefig("perfs.pdf")
 plt.show()

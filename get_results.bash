@@ -1,15 +1,12 @@
 OUTPUT_FILE="perfs.csv"
 TITLE_COLUMNS="NbThreads,Time1,Time2,Time3,Time4,Time5"
-NB_THREADS=(1 2 3 4 5 6 7 8)
+NB_THREADS=(2 3 4 5 6 7 8)
 TIMES=()
 
 echo $TITLE_COLUMNS > $OUTPUT_FILE
-
-# Compilation
 make -s clean
 make -s
-
-for i in {1..8}
+for i in {2..8}
 do
     for j in {1..5}
     do
