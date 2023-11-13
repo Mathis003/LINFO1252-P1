@@ -4,62 +4,85 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <semaphore.h>
+#define NB_READS 1000
+#define NB_WRITES 1000
 
 int database = 0;
 
-void read_database() {
+void read_database()
+{
     printf("read value: %d\n", database);
 }
 
-void write_database() {
-    database = database+1;
+void write_database()
+{
+    database = database + 1;
     printf("wrote value: %d\n", database);
 }
 
-
 pthread_mutex_t readMutex;
 sem_t writeSem, queueSem;
-int readcount=0; // nombre de readers
+int readCount = 0; // nombre de readers
 
+int readsDone = 0;
 void *reader(void *arg)
 {
- while(true)
- {
-   sem_wait(&queueSem);
-   pthread_mutex_lock(&readMutex);
-   // critical section
-   readcount++;
-   if (readcount==1)
-   { // first reader arrives
-     sem_wait(&writeSem);
-   }
-   pthread_mutex_unlock(&readMutex);
-   sem_post(&queueSem);
+    while (true)
+    {
+        sem_wait(&queueSem);
+        pthread_mutex_lock(&readMutex);
+        // critical section
+        readCount++;
+        if (readCount == 1)
+        { // first reader arrives
+            sem_wait(&writeSem);
+        }
+        pthread_mutex_unlock(&readMutex);
+        sem_post(&queueSem);
 
-   read_database();
+        if (readsDone >= NB_READS)
+        {
+            pthread_mutex_lock(&readMutex);
+            // critical section
+            readCount--;
+            if (readCount == 0)
+            { // last reader leaves
+                sem_post(&writeSem);
+            }
+            pthread_mutex_unlock(&readMutex);
+            break;
+        }
+        read_database();
 
-   pthread_mutex_lock(&readMutex);
-   // critical section
-   readcount--;
-   if(readcount==0)
-   { // last reader leaves
-     sem_post(&writeSem);
-   }
-   pthread_mutex_unlock(&readMutex);
- }
+        pthread_mutex_lock(&readMutex);
+        // critical section
+        readCount--;
+        if (readCount == 0)
+        { // last reader leaves
+            sem_post(&writeSem);
+        }
+        pthread_mutex_unlock(&readMutex);
+    }
 }
 
+int writesDone = 0;
 void *writer(void *arg)
 {
- while(true)
- {
-   sem_wait(&queueSem);
-   sem_wait(&writeSem);
-   // critical section
-   write_database();
-   sem_post(&writeSem);
-   sem_post(&queueSem);
- }
+    while (true)
+    {
+        sem_wait(&queueSem);
+        sem_wait(&writeSem);
+        if (writesDone >= NB_WRITES)
+        {
+            sem_post(&writeSem);
+            sem_post(&queueSem);
+            break;
+        }
+        // critical section
+        write_database();
+        sem_post(&writeSem);
+        sem_post(&queueSem);
+    }
 }
 
 #define NUM_THREADS 10
@@ -83,8 +106,9 @@ int main(int argc, char *argv[])
 
     int error = 0;
     error += sem_init(&writeSem, 0, 1);
-    error += sem_init(&queueSem, 0, 1);     
-    if (error != 0) {
+    error += sem_init(&queueSem, 0, 1);
+    if (error != 0)
+    {
         perror("sem_init()");
         return EXIT_FAILURE;
     }
@@ -98,19 +122,23 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    for (int i = 0; i < nbWritters; i++) {
+    for (int i = 0; i < nbWritters; i++)
+    {
         pthread_create(&writters[i], NULL, writer, NULL);
     }
 
-    for (int i = 0; i < nbReaders; i++) {
+    for (int i = 0; i < nbReaders; i++)
+    {
         pthread_create(&readers[i], NULL, reader, NULL);
     }
 
-    for (int i = 0; i < nbWritters; i++) {
+    for (int i = 0; i < nbWritters; i++)
+    {
         pthread_join(writters[i], NULL);
     }
 
-    for (int i = 0; i < nbReaders; i++) {
+    for (int i = 0; i < nbReaders; i++)
+    {
         pthread_join(readers[i], NULL);
     }
 
