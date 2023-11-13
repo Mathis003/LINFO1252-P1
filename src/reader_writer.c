@@ -4,8 +4,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <semaphore.h>
-#define NB_READS 1000
-#define NB_WRITES 1000
+#define NB_READS 100000
+#define NB_WRITES 100000
 
 int database = 0;
 
@@ -33,6 +33,7 @@ void *reader(void *arg)
         pthread_mutex_lock(&readMutex);
         // critical section
         readCount++;
+        readsDone++;
         if (readCount == 1)
         { // first reader arrives
             sem_wait(&writeSem);
@@ -72,6 +73,7 @@ void *writer(void *arg)
     {
         sem_wait(&queueSem);
         sem_wait(&writeSem);
+        writesDone++;
         if (writesDone >= NB_WRITES)
         {
             sem_post(&writeSem);
