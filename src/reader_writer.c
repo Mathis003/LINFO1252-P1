@@ -4,9 +4,15 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <semaphore.h>
-#define NB_READS 100000
-#define NB_WRITES 100000
 
+#define NB_READS 2560
+#define NB_WRITES 640
+
+pthread_mutex_t readMutex;
+sem_t writeSem, queueSem;
+int readCount = 0;
+int readsDone = 0;
+int writesDone = 0;
 int database = 0;
 
 void read_database()
@@ -16,57 +22,47 @@ void read_database()
 
 void write_database()
 {
-    database = database + 1;
+    database++;
     printf("wrote value: %d\n", database);
 }
 
-pthread_mutex_t readMutex;
-sem_t writeSem, queueSem;
-int readCount = 0; // nombre de readers
-
-int readsDone = 0;
 void *reader(void *arg)
 {
     while (true)
     {
         sem_wait(&queueSem);
         pthread_mutex_lock(&readMutex);
-        // critical section
+        // critical section : begin
         readCount++;
         readsDone++;
-        if (readCount == 1)
-        { // first reader arrives
-            sem_wait(&writeSem);
-        }
+        if (readCount == 1) sem_wait(&writeSem); // first reader arrives
+        // critical section : end
         pthread_mutex_unlock(&readMutex);
         sem_post(&queueSem);
 
         if (readsDone >= NB_READS)
         {
             pthread_mutex_lock(&readMutex);
-            // critical section
+            // critical section : begin
             readCount--;
-            if (readCount == 0)
-            { // last reader leaves
-                sem_post(&writeSem);
-            }
+            if (readCount == 0) sem_post(&writeSem); // last reader leaves
+            // critical section : end
             pthread_mutex_unlock(&readMutex);
             break;
         }
+        
         read_database();
 
         pthread_mutex_lock(&readMutex);
-        // critical section
+        // critical section : begin
         readCount--;
-        if (readCount == 0)
-        { // last reader leaves
-            sem_post(&writeSem);
-        }
+        if (readCount == 0) sem_post(&writeSem); // last reader leaves
+        // critical section : end
         pthread_mutex_unlock(&readMutex);
     }
 }
 
-int writesDone = 0;
+
 void *writer(void *arg)
 {
     while (true)
@@ -87,7 +83,14 @@ void *writer(void *arg)
     }
 }
 
-#define NUM_THREADS 10
+void free_all(pthread_t *writters, pthread_t *readers)
+{
+    free(writters);
+    free(readers);
+    sem_destroy(&writeSem);
+    sem_destroy(&queueSem);
+    pthread_mutex_destroy(&readMutex);
+}
 
 int main(int argc, char *argv[])
 {
@@ -112,43 +115,61 @@ int main(int argc, char *argv[])
     if (error != 0)
     {
         perror("sem_init()");
+        sem_destroy(&writeSem);
+        sem_destroy(&queueSem);
+        return EXIT_FAILURE;
+    }
+
+    if (pthread_mutex_init(&readMutex, NULL) != 0)
+    {
+        perror("pthread_mutex_init()");
+        sem_destroy(&writeSem);
+        sem_destroy(&queueSem);
         return EXIT_FAILURE;
     }
 
     pthread_t *writters = malloc(sizeof(pthread_t) * nbWritters);
     pthread_t *readers = malloc(sizeof(pthread_t) * nbReaders);
 
-    if (pthread_mutex_init(&readMutex, NULL) != 0)
-    {
-        perror("pthread_mutex_init()");
-        return EXIT_FAILURE;
-    }
-
     for (int i = 0; i < nbWritters; i++)
     {
-        pthread_create(&writters[i], NULL, writer, NULL);
+        if (pthread_create(&writters[i], NULL, writer, NULL) != 0)
+        {
+            perror("pthread_create()");
+            free_all(writer, reader);
+            return EXIT_FAILURE;
+        }
     }
 
     for (int i = 0; i < nbReaders; i++)
     {
-        pthread_create(&readers[i], NULL, reader, NULL);
+        if (pthread_create(&readers[i], NULL, reader, NULL) != 0)
+        {
+            perror("pthread_create()");
+            free_all(writer, reader);
+            return EXIT_FAILURE;
+        }
     }
 
     for (int i = 0; i < nbWritters; i++)
     {
-        pthread_join(writters[i], NULL);
+        if (pthread_join(writters[i], NULL) != 0)
+        {
+            perror("pthread_join()");
+            free_all(writer, reader);
+            return EXIT_FAILURE;
+        }
     }
 
     for (int i = 0; i < nbReaders; i++)
     {
-        pthread_join(readers[i], NULL);
+        if (pthread_join(readers[i], NULL) != 0)
+        {
+            perror("pthread_join()");
+            free_all(writer, reader);
+            return EXIT_FAILURE;
+        }
     }
-
-    free(writters);
-    free(readers);
-    sem_destroy(&writeSem);
-    sem_destroy(&queueSem);
-    pthread_mutex_destroy(&readMutex);
 
     return EXIT_SUCCESS;
 }
