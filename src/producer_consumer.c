@@ -60,15 +60,20 @@ int remove_item()
 void *consumer(void *args)
 {
     int item;
-    while (nbProductionsDone < NB_PRODUCTIONS)
+    while (1)
     {
         sem_wait(&full);
         pthread_mutex_lock(&mutex);
-
-        // printf("%d\n", nbProductionsDone);
+        if (nbProductionsDone + 1 == NB_PRODUCTIONS)
+        {
+            item = remove_item();
+            nbProductionsDone++;
+            pthread_mutex_unlock(&mutex);
+            sem_post(&full);
+            return NULL;
+        }
         item = remove_item();
         nbProductionsDone++;
-
         pthread_mutex_unlock(&mutex);
         sem_post(&empty);
     }
@@ -120,11 +125,8 @@ int main(int argc, char *argv[])
     int rest = NB_PRODUCTIONS % nbProducers;
     if (rest != 0) (*ptr_nbSteps)++;
 
-    int cnter = 0;
-
     for (int idx_threads = 0; idx_threads < nbProducers; idx_threads++)
     {
-        cnter += *ptr_nbSteps;
         if (pthread_create(&producers[idx_threads], NULL, producer, (void *) ptr_nbSteps) != 0)
         {
             perror("pthread_create()");
@@ -137,8 +139,6 @@ int main(int argc, char *argv[])
         rest--;
         if (rest == 0) (*ptr_nbSteps)--;
     }
-
-    printf("%d\n", cnter);
 
     for (int idx_threads = 0; idx_threads < nbConsumers; idx_threads++)
     {
@@ -163,9 +163,6 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
     }
-
-    for (int i = 0; i < nbConsumers; i++) sem_post(&full);
-
 
     for (int idx_threads = 0; idx_threads < nbConsumers; idx_threads++)
     {
