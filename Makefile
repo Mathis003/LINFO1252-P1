@@ -1,31 +1,39 @@
 CC=gcc
 CFLAGS=-Wall -g -pthread
 LDFLAGS=-lpthread
+
 SRC_DIR=src
+BASH_DIR=$(SRC_DIR)/script_bash
+PYTHON_DIR=$(SRC_DIR)/script_python
+C_DIR=$(SRC_DIR)/script_C
 CSV_DIR=csv_files
 GRAPHS_DIR=graphs
+BIN_DIR=bin
 
-PROGRAMS=philosopher producer_consumer reader_writer
-RESULTS_CSV=perfs_philosopher perfs_producer_consumer perfs_reader_writer
+PROGRAMS=reader_writer producer_consumer philosopher
 
-.PRECIOUS: %.out
+.PRECIOUS: $(BIN_DIR)/%.bin
 
-all: $(PROGRAMS)
-
-%.out: $(SRC_DIR)/%.c
+# Compile le programme "%"
+$(BIN_DIR)/%.bin: $(C_DIR)/%.c
+	@mkdir -p $(BIN_DIR)
 	@$(CC) $(CFLAGS) $< $(LDFLAGS) -o $@
 
-run_%: %.out
+# Créer les répértoires nécessaires et lance l'analyse de performances du programme "%"
+run_%: $(BIN_DIR)/%.bin
 	@mkdir -p $(CSV_DIR)
 	@mkdir -p $(GRAPHS_DIR)/png
 	@mkdir -p $(GRAPHS_DIR)/pdf
-	@bash $(SRC_DIR)/get_results.bash $< "$(CSV_DIR)/perfs_$*.csv" $(if $(filter philosopher,$*),1,2)
-	@python3 $(SRC_DIR)/plot_results.py "$(CSV_DIR)/perfs_$*.csv"
+	@bash $(BASH_DIR)/perfs_$*.bash
+	@python3 $(PYTHON_DIR)/perfs_graphs.py $(CSV_DIR)/$*.csv
 
+# Lance l'analyse de performances sur tous les programmes
 run: $(addprefix run_, $(PROGRAMS))
 
+# Supprime le répértoire contenant les exécutable .bin
 clean:
-	@rm -f *.out
+	@rm -rf $(BIN_DIR)
 
+# Supprime le répértoire contenant les exécutable .bin, les graphiques de performances et les fichiers .csv
 clean_all: clean
 	@rm -rf $(CSV_DIR) $(GRAPHS_DIR)

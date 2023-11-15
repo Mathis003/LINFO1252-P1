@@ -72,6 +72,8 @@ void *philosopher_function(void* arg)
         philosopher_eating(id, rightGreater, left_baguette, right_baguette);
     }
 
+    free(arg_philosopher);
+    // printf("Philosopher [%d] has finished his job.\n", id);
     return NULL;
 }
 
@@ -85,8 +87,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    int nbThreads = atoi(argv[1]);
-    const int NB_PHILOSOPHERS = nbThreads;
+    const int NB_PHILOSOPHERS = atoi(argv[1]);
 
     if (NB_PHILOSOPHERS <= 1)
     {
@@ -107,7 +108,7 @@ int main(int argc, char *argv[])
     }
 
     bool rightGreater;
-    int i = 0; // Important because i need to be valid outside the loop !
+    int i = 0;
 
     for (i = 0; i < NB_PHILOSOPHERS; i++)
     {
@@ -115,10 +116,11 @@ int main(int argc, char *argv[])
         void *args = create_arg_philosopher(i, rightGreater, &baguettes[i], &baguettes[(i + 1) % NB_PHILOSOPHERS]);
         if (args == NULL) return EXIT_FAILURE;
 
-        if (pthread_create(&philosophers[i], NULL, &philosopher_function, args) != 0)
+        if (pthread_create(&philosophers[i], NULL, philosopher_function, args) != 0)
         {
             perror("pthread_create()");
-            for (int i = 0; i < NB_PHILOSOPHERS; i++) pthread_mutex_destroy(&baguettes[i]);
+            free(args);
+            for (int j = 0; j < NB_PHILOSOPHERS; j++) pthread_mutex_destroy(&baguettes[j]);
             return EXIT_FAILURE;
         }
     }
@@ -128,7 +130,7 @@ int main(int argc, char *argv[])
         if (pthread_join(philosophers[i], NULL) != 0)
         {
             perror("pthread_join()");
-            for (int i = 0; i < NB_PHILOSOPHERS; i++) pthread_mutex_destroy(&baguettes[i]);
+            for (int j = 0; j < NB_PHILOSOPHERS; j++) pthread_mutex_destroy(&baguettes[j]);
             return EXIT_FAILURE;
         }
     }

@@ -17,6 +17,9 @@ if not csv_file.lower().endswith('.csv'):
     print(f"Error: The file {csv_file} isn't a CSV file.")
     sys.exit(1)
 
+csv_file_name = os.path.splitext(os.path.basename(csv_file))[0]
+program_name = csv_file_name.split("_")[0]
+
 data = pd.read_csv(csv_file)
 nbThreads = data['NbThreads']
 data = data.drop(columns="NbThreads")
@@ -34,12 +37,11 @@ plt.figure()
 plt.plot(nbThreads, means, marker='o', markersize=6, color='blue', linestyle='-', label='Mean')
 plt.scatter(nbThreads, medians, color='green', label='Median', s=40)
 plt.errorbar(nbThreads, medians, yerr=stds, fmt='o', markersize=5, color='red', label='Std Dev')
-plt.title('Time Performance Metrics vs. Number of Threads')
+plt.title("Time Performance Metrics [{}.c] vs. Number of Threads".format(program_name))
 plt.xlabel('Number of Threads []')
 plt.ylabel('Execution Time [sec]')
 plt.legend()
 plt.grid()
-csv_file_name = os.path.splitext(os.path.basename(csv_file))[0]
 plt.savefig("graphs/png/" + csv_file_name + ".png")
 plt.savefig("graphs/pdf/" + csv_file_name + ".pdf")
 # plt.show()
