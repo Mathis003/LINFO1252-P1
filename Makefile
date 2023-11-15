@@ -10,7 +10,7 @@ CSV_DIR=csv_files
 GRAPHS_DIR=graphs
 BIN_DIR=bin
 
-PROGRAMS=reader_writer producer_consumer philosopher
+PROGRAMS=philosopher producer_consumer reader_writer
 
 .PRECIOUS: $(BIN_DIR)/%.bin
 
