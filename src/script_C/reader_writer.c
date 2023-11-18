@@ -24,13 +24,13 @@ int readersCount, writersCount = 0;
 void read_database()
 {
     for (int i = 0; i < 10000; i++);
-    printf("Reading...\n");
+    printf("Reading...: readsDone: %d, writesDone: %d\n", readsDone, writesDone);
 }
 
 void write_database()
 {
     for (int i = 0; i < 10000; i++);
-    printf("Writing...\n");
+    printf("Writing... readsDone: %d, writesDone: %d\n", readsDone, writesDone);
 }
 
 void *reader(void *arg)
@@ -52,17 +52,18 @@ void *reader(void *arg)
         pthread_mutex_unlock(&reader_mutex);
         sem_post(&db_reader);
 
-        readsDone++;
 
         pthread_mutex_unlock(&z);
 
-        read_database();
-
-        if (readsDone == NB_READS)
+        if (readsDone >= NB_READS)
         {
             sem_post(&db_writer);
             break;
         }
+
+        read_database();
+        readsDone++;
+
 
         pthread_mutex_lock(&reader_mutex);
         readersCount--;
@@ -79,37 +80,24 @@ void *writer(void *arg)
 {
     while (1)
     {
-        pthread_mutex_lock(&writer_mutex);
-        writersCount++;
-        if (writersCount == 1)
+
+        sem_wait(&db_reader);
+        sem_wait(&db_writer);
+
+
+        if (writesDone == NB_WRITES)
         {
-            sem_wait(&db_writer);
+            sem_post(&db_reader);
+            sem_post(&db_writer);
+            break;
         }
 
         write_database();
         writesDone++;
 
-        if (writesDone == NB_WRITES)
-        {
-            pthread_mutex_unlock(&writer_mutex);
 
-            sem_wait(&db_reader); // Erreur ici
-            sem_post(&db_writer); // Ou ici
-            break;
-        }
-
-        pthread_mutex_unlock(&writer_mutex);
-
-        sem_wait(&db_reader); // Erreur ici
-        sem_post(&db_writer); // Ou ici
-
-        writersCount--;
-        pthread_mutex_lock(&writer_mutex);
-        if (writersCount == 0)
-        {
-            sem_post(&db_writer);
-        }
-        pthread_mutex_unlock(&writer_mutex);
+        sem_post(&db_writer);
+        sem_post(&db_reader);
     }
 }
 
