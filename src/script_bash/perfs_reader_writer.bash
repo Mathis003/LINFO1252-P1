@@ -10,7 +10,7 @@ echo $TITLE_COLUMNS > $CSV_FILE
 
 for i in "${SEQ_NB_THREADS[@]}"; do
     for j in $(seq 0 $NB_TIMES); do
-        ARGS=${i}/2
+        ARGS=$(( ${i} / 2 ))
         TIME=$(/usr/bin/time -f %e $EXEC_NAME $ARGS $ARGS 2>&1 | tail -n 1)
         TIMES[$j]=$TIME
     done

@@ -18,7 +18,7 @@ if not csv_file.lower().endswith('.csv'):
     sys.exit(1)
 
 csv_file_name = os.path.splitext(os.path.basename(csv_file))[0]
-program_name = csv_file_name.split("_")[0]
+program_name = csv_file_name[6:]
 
 data = pd.read_csv(csv_file)
 nbThreads = data['NbThreads']

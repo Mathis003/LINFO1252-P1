@@ -10,7 +10,7 @@ CSV_DIR=csv_files
 GRAPHS_DIR=graphs
 BIN_DIR=bin
 
-PROGRAMS=philosopher producer_consumer reader_writer
+PROGRAMS=producer_consumer philosopher reader_writer
 
 .PRECIOUS: $(BIN_DIR)/%.bin
 
@@ -25,7 +25,7 @@ run_%: $(BIN_DIR)/%.bin
 	@mkdir -p $(GRAPHS_DIR)/png
 	@mkdir -p $(GRAPHS_DIR)/pdf
 	@bash $(BASH_DIR)/perfs_$*.bash
-	@python3 $(PYTHON_DIR)/perfs_graphs.py $(CSV_DIR)/$*.csv
+	@python3 $(PYTHON_DIR)/perfs_graphs.py $(CSV_DIR)/perfs_$*.csv
 
 # Lance l'analyse de performances sur tous les programmes
 run: $(addprefix run_, $(PROGRAMS))

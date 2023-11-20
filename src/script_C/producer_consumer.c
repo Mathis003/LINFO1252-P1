@@ -7,15 +7,13 @@
 
 #define NB_PRODUCTIONS 8192
 #define CAPACITY_BUFFER 8
-#define MIN INT64_MIN
-#define MAX INT64_MAX
 
 int buffer[CAPACITY_BUFFER];
-int nbProductionsDone = 0;
-int idx_buffer = 0;
-
+int nbProductionsDone, nbConsumeDone = 0;
 pthread_mutex_t mutex;
 sem_t empty, full;
+int idx_buffer = 0;
+
 
 void treatment(void)
 {
@@ -24,28 +22,38 @@ void treatment(void)
 
 int produce(void)
 {
-    return rand() % 100;
-    // return rand() % MAX;
+    return INT16_MIN + rand() % (INT16_MAX - INT16_MIN + 1);
 }
 
 void insert_item(int item)
 {
     buffer[idx_buffer] = item;
-    idx_buffer = (idx_buffer == CAPACITY_BUFFER) ? idx_buffer : idx_buffer + 1;
+    idx_buffer++;
 }
 
-void *producer(void *args)
+void *producer(void *)
 {
-    int *nbSteps = (int *) args;
     int item;
-    for (int i = 0; i < *nbSteps; i++)
+    while (1)
     {
         item = produce();
         sem_wait(&empty);
         pthread_mutex_lock(&mutex);
+
+        if (nbProductionsDone == NB_PRODUCTIONS)
+        {
+            sem_post(&full);
+            pthread_mutex_unlock(&mutex);
+            break;
+        }
+
         insert_item(item);
-        pthread_mutex_unlock(&mutex);
+        nbProductionsDone++;
+        // printf("Is producing...\n");
+        // printf("nbProductionsDone : %d\n", nbProductionsDone);
         sem_post(&full);
+        pthread_mutex_unlock(&mutex);
+
         treatment();
     }
     return NULL;
@@ -57,25 +65,33 @@ int remove_item()
     return buffer[idx_buffer];
 }
 
-void *consumer(void *args)
+void *consumer(void *)
 {
     int item;
     while (1)
     {
         sem_wait(&full);
         pthread_mutex_lock(&mutex);
-        if (nbProductionsDone + 1 == NB_PRODUCTIONS)
+
+        if (nbConsumeDone == NB_PRODUCTIONS)
         {
-            item = remove_item();
-            nbProductionsDone++;
+            sem_post(&empty);
             pthread_mutex_unlock(&mutex);
-            sem_post(&full);
-            return NULL;
+            break;
         }
         item = remove_item();
-        nbProductionsDone++;
-        pthread_mutex_unlock(&mutex);
+
+        // printf("buffer : [ ");
+        // for (int i = 0; i < 8; i++) printf("%d ", buffer[i]);
+        // printf(" ]\n");
+        // printf("consumed : %d\n", item);
+        
+        nbConsumeDone++;
+        // printf("Is consuming...\n");
+        // printf("nbConsumeDone : %d\n", nbConsumeDone);
+
         sem_post(&empty);
+        pthread_mutex_unlock(&mutex);
     }
     return NULL;
 }
@@ -116,18 +132,14 @@ int main(int argc, char *argv[])
     if (sem_init(&full, 0, 0) !=  0)
     {
         perror("sem_init()");
+        sem_destroy(&empty);
         pthread_mutex_destroy(&mutex);
         return EXIT_FAILURE;
     }
 
-    int nbSteps = NB_PRODUCTIONS / nbProducers;
-    int *ptr_nbSteps = &nbSteps;
-    int rest = NB_PRODUCTIONS % nbProducers;
-    if (rest != 0) (*ptr_nbSteps)++;
-
     for (int idx_threads = 0; idx_threads < nbProducers; idx_threads++)
     {
-        if (pthread_create(&producers[idx_threads], NULL, producer, (void *) ptr_nbSteps) != 0)
+        if (pthread_create(&producers[idx_threads], NULL, producer, NULL) != 0)
         {
             perror("pthread_create()");
             sem_destroy(&empty);
@@ -135,9 +147,6 @@ int main(int argc, char *argv[])
             pthread_mutex_destroy(&mutex);
             return EXIT_FAILURE;
         }
-
-        rest--;
-        if (rest == 0) (*ptr_nbSteps)--;
     }
 
     for (int idx_threads = 0; idx_threads < nbConsumers; idx_threads++)
@@ -176,8 +185,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    printf("%d\n", nbProductionsDone);
-
     if (pthread_mutex_destroy(&mutex) != 0)
     {
         perror("pthread_mutex_destroy()");
@@ -186,7 +193,18 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    sem_destroy(&empty);
-    sem_destroy(&full);
+    if (sem_destroy(&empty) != 0)
+    {
+        perror("sem_destroy()");
+        sem_destroy(&full);
+        return EXIT_FAILURE;
+    }
+
+    if (sem_destroy(&full) != 0)
+    {
+        perror("sem_destroy()");
+        return EXIT_FAILURE;
+    }
+
     return EXIT_SUCCESS;
 }

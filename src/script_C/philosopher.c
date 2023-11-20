@@ -51,6 +51,7 @@ void philosopher_eating(int id, bool rightGreater, pthread_mutex_t *left_baguett
 void philosopher_thinking(int id)
 {
     // printf("Philosopher [%d] is thinking.\n", id);
+    return;
 }
 
 
@@ -135,13 +136,16 @@ int main(int argc, char *argv[])
         }
     }
 
+    int error = 0;
     for (int i = 0; i < NB_PHILOSOPHERS; i++)
     {
-        if (pthread_mutex_destroy(&baguettes[i]) != 0)
-        {
-            perror("pthread_mutex_destroy()");
-            return EXIT_FAILURE;
-        }
+        if (pthread_mutex_destroy(&baguettes[i]) != 0) error = 1;
+    }
+
+    if (error)
+    {
+        perror("pthread_mutex_destroy()");
+        return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;
