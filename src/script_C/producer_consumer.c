@@ -27,11 +27,12 @@ int produce(void)
 
 void insert_item(int item)
 {
+    printf("Produced : %d\n", item);
     buffer[idx_buffer] = item;
     idx_buffer++;
 }
 
-void *producer(void *)
+void *producer(void *unused)
 {
     int item;
     while (1)
@@ -49,7 +50,6 @@ void *producer(void *)
 
         insert_item(item);
         nbProductionsDone++;
-        // printf("Is producing...\n");
         // printf("nbProductionsDone : %d\n", nbProductionsDone);
         sem_post(&full);
         pthread_mutex_unlock(&mutex);
@@ -62,12 +62,13 @@ void *producer(void *)
 int remove_item()
 {
     idx_buffer--;
-    return buffer[idx_buffer];
+    int item = buffer[idx_buffer];
+    // printf("Consumed : %d\n", item);
+    return item;
 }
 
-void *consumer(void *)
+void *consumer(void *unused)
 {
-    int item;
     while (1)
     {
         sem_wait(&full);
@@ -79,15 +80,14 @@ void *consumer(void *)
             pthread_mutex_unlock(&mutex);
             break;
         }
-        item = remove_item();
+        
+        remove_item();
 
         // printf("buffer : [ ");
         // for (int i = 0; i < 8; i++) printf("%d ", buffer[i]);
         // printf(" ]\n");
-        // printf("consumed : %d\n", item);
         
         nbConsumeDone++;
-        // printf("Is consuming...\n");
         // printf("nbConsumeDone : %d\n", nbConsumeDone);
 
         sem_post(&empty);

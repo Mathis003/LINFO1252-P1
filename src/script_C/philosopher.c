@@ -75,7 +75,6 @@ void *philosopher_function(void* arg)
 
     free(arg_philosopher);
     // printf("Philosopher [%d] has finished his job.\n", id);
-    return NULL;
 }
 
 

@@ -28,28 +28,28 @@ void write_database()
     printf("readsDone: %d, writesDone: %d\n", readsDone, writesDone);
 }
 
-void *reader(void *arg)
+void *reader(void *unused)
 {
     while (1)
     {
         // ** Section Begin : General ** //
         pthread_mutex_lock(&general_mutex);
 
-            sem_wait(&db_reader);
+        sem_wait(&db_reader);
 
-            // ** Section Begin : Readers ** //
-            pthread_mutex_lock(&reader_mutex);
+        // ** Section Begin : Readers ** //
+        pthread_mutex_lock(&reader_mutex);
 
-                readersCount++;
-                if (readersCount == 1)
-                {
-                    sem_wait(&db_writer);
-                }
+        readersCount++;
+        if (readersCount == 1)
+        {
+            sem_wait(&db_writer);
+        }
 
-            pthread_mutex_unlock(&reader_mutex);
-            // ** Section End : Readers ** //
+        pthread_mutex_unlock(&reader_mutex);
+        // ** Section End : Readers ** //
 
-            sem_post(&db_reader);
+        sem_post(&db_reader);
 
         pthread_mutex_unlock(&general_mutex);
         // ** Section End : General ** //
@@ -57,27 +57,29 @@ void *reader(void *arg)
         if (readsDone >= NB_READS)
         {
             sem_post(&db_writer);
+            sem_post(&db_reader);
             break;
         }
 
         read_database();
-        readsDone++;
 
         // ** Section Begin : Readers ** //
         pthread_mutex_lock(&reader_mutex);
 
-            readersCount--;
-            if (readersCount == 0)
-            {
-                sem_post(&db_writer);
-            }
+        readsDone++;
+        readersCount--;
+        if (readersCount == 0)
+        {
+            sem_post(&db_writer);
+        }
 
         pthread_mutex_unlock(&reader_mutex);
         // ** Section End : Readers ** //
     }
+    return NULL;
 }
 
-void *writer(void *arg)
+void *writer(void *unused)
 {
     while (1)
     {
@@ -97,6 +99,7 @@ void *writer(void *arg)
         sem_post(&db_writer);
         sem_post(&db_reader);
     }
+    return NULL;
 }
 
 int destroy_all()
