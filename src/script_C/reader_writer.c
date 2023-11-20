@@ -8,14 +8,7 @@
 #define NB_READS 2560
 #define NB_WRITES 640
 
-/*
-* Remarque Assistant:
-* Bloqué tous les readers dès que y'a un writer.
-* Les writers ont priorités!
-* Quand plus de writers (et uniquement dans ce cas ci) => readers se libèrent en cascade.
-*/
-
-pthread_mutex_t writer_mutex, reader_mutex, z;
+pthread_mutex_t writer_mutex, reader_mutex, general_mutex;
 sem_t db_writer, db_reader;
 
 int readsDone, writesDone = 0;
@@ -24,36 +17,42 @@ int readersCount, writersCount = 0;
 void read_database()
 {
     for (int i = 0; i < 10000; i++);
-    printf("Reading...: readsDone: %d, writesDone: %d\n", readsDone, writesDone);
+    printf("Reading...\n");
+    printf("readsDone: %d, writesDone: %d\n", readsDone, writesDone);
 }
 
 void write_database()
 {
     for (int i = 0; i < 10000; i++);
-    printf("Writing... readsDone: %d, writesDone: %d\n", readsDone, writesDone);
+    printf("Writing...\n");
+    printf("readsDone: %d, writesDone: %d\n", readsDone, writesDone);
 }
 
 void *reader(void *arg)
 {
     while (1)
     {
-        pthread_mutex_lock(&z);
+        // ** Section Begin : General ** //
+        pthread_mutex_lock(&general_mutex);
 
-        sem_wait(&db_reader);
+            sem_wait(&db_reader);
 
-        pthread_mutex_lock(&reader_mutex);
-        readersCount++;
+            // ** Section Begin : Readers ** //
+            pthread_mutex_lock(&reader_mutex);
 
-        if (readersCount == 1)
-        {
-            sem_wait(&db_writer);
-        }
+                readersCount++;
+                if (readersCount == 1)
+                {
+                    sem_wait(&db_writer);
+                }
 
-        pthread_mutex_unlock(&reader_mutex);
-        sem_post(&db_reader);
+            pthread_mutex_unlock(&reader_mutex);
+            // ** Section End : Readers ** //
 
+            sem_post(&db_reader);
 
-        pthread_mutex_unlock(&z);
+        pthread_mutex_unlock(&general_mutex);
+        // ** Section End : General ** //
 
         if (readsDone >= NB_READS)
         {
@@ -64,15 +63,17 @@ void *reader(void *arg)
         read_database();
         readsDone++;
 
-
+        // ** Section Begin : Readers ** //
         pthread_mutex_lock(&reader_mutex);
-        readersCount--;
-        if (readersCount == 0)
-        {
-            sem_post(&db_writer);
-        }
+
+            readersCount--;
+            if (readersCount == 0)
+            {
+                sem_post(&db_writer);
+            }
 
         pthread_mutex_unlock(&reader_mutex);
+        // ** Section End : Readers ** //
     }
 }
 
@@ -80,10 +81,8 @@ void *writer(void *arg)
 {
     while (1)
     {
-
         sem_wait(&db_reader);
         sem_wait(&db_writer);
-
 
         if (writesDone == NB_WRITES)
         {
@@ -95,20 +94,18 @@ void *writer(void *arg)
         write_database();
         writesDone++;
 
-
         sem_post(&db_writer);
         sem_post(&db_reader);
     }
 }
 
-void free_all(pthread_t *writers, pthread_t *readers)
+int destroy_all()
 {
-    free(writers);
-    free(readers);
-    sem_destroy(&db_writer);
-    sem_destroy(&db_reader);
-    pthread_mutex_destroy(&writer_mutex);
-    pthread_mutex_destroy(&reader_mutex);
+    if (sem_destroy(&db_writer) != 0) return 0;
+    if (sem_destroy(&db_reader) != 0) return 0;
+    if (pthread_mutex_destroy(&writer_mutex) != 0) return 0;
+    if (pthread_mutex_destroy(&reader_mutex) != 0) return 0;
+    return 1;
 }
 
 int main(int argc, char *argv[])
@@ -156,7 +153,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    if (pthread_mutex_init(&z, NULL) != 0)
+    if (pthread_mutex_init(&general_mutex, NULL) != 0)
     {
         perror("pthread_mutex_init()");
         sem_destroy(&db_writer);
@@ -165,15 +162,15 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    pthread_t *writers = malloc(sizeof(pthread_t) * nbWriters);
-    pthread_t *readers = malloc(sizeof(pthread_t) * nbReaders);
+    pthread_t writers[nbWriters];
+    pthread_t readers[nbReaders];
 
     for (int i = 0; i < nbWriters; i++)
     {
         if (pthread_create(&writers[i], NULL, writer, NULL) != 0)
         {
             perror("pthread_create()");
-            free_all(writers, readers);
+            destroy_all();
             return EXIT_FAILURE;
         }
     }
@@ -183,7 +180,7 @@ int main(int argc, char *argv[])
         if (pthread_create(&readers[i], NULL, reader, NULL) != 0)
         {
             perror("pthread_create()");
-            free_all(writers, readers);
+            destroy_all();
             return EXIT_FAILURE;
         }
     }
@@ -193,7 +190,7 @@ int main(int argc, char *argv[])
         if (pthread_join(writers[i], NULL) != 0)
         {
             perror("pthread_join()");
-            free_all(writers, readers);
+            destroy_all();
             return EXIT_FAILURE;
         }
     }
@@ -203,9 +200,15 @@ int main(int argc, char *argv[])
         if (pthread_join(readers[i], NULL) != 0)
         {
             perror("pthread_join()");
-            free_all(writers, readers);
+            destroy_all();
             return EXIT_FAILURE;
         }
+    }
+
+    if (destroy_all() == 0)
+    {
+        perror("destroy_all()");
+        return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;
