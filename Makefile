@@ -24,8 +24,8 @@ run_%: $(BIN_DIR)/%.bin
 	@mkdir -p $(CSV_DIR)
 	@mkdir -p $(GRAPHS_DIR)/png
 	@mkdir -p $(GRAPHS_DIR)/pdf
-	@bash $(BASH_DIR)/perfs_$*.bash
-	@python3 $(PYTHON_DIR)/perfs_graphs.py $(CSV_DIR)/perfs_$*.csv
+# @bash $(BASH_DIR)/perfs_$*.bash
+# @python3 $(PYTHON_DIR)/perfs_graphs.py $(CSV_DIR)/perfs_$*.csv
 
 # Lance l'analyse de performances sur tous les programmes
 run: $(addprefix run_, $(PROGRAMS))
