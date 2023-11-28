@@ -14,29 +14,24 @@ PROGRAMS=producer_consumer philosopher reader_writer
 
 .PRECIOUS: $(BIN_DIR)/%.bin
 
-# Compile le programme "%"
-$(BIN_DIR)/%.bin: $(C_DIR)/%.c
+all: run csv plot
+
+run: $(addprefix run_, $(PROGRAMS))
+run_%:
 	@mkdir -p $(BIN_DIR)
-	@$(CC) $(CFLAGS) $< $(LDFLAGS) -o $@
+	@$(CC) $(CFLAGS) $(C_DIR)/$*.c $(LDFLAGS) -o $(BIN_DIR)/$*.bin
 
-# Créer les répértoires nécessaires et lance l'analyse de performances du programme "%"
-run_%: $(BIN_DIR)/%.bin
+csv: $(addprefix csv_, $(PROGRAMS))
+csv_%:
 	@mkdir -p $(CSV_DIR)
-	@mkdir -p $(GRAPHS_DIR)/png
-	@mkdir -p $(GRAPHS_DIR)/pdf
-# @bash $(BASH_DIR)/perfs_$*.bash
-# @python3 $(PYTHON_DIR)/perfs_graphs.py $(CSV_DIR)/perfs_$*.csv
+	@bash $(BASH_DIR)/perfs_$*.bash
 
-graphs: $(BIN_DIR)/%.bin
+plot: $(addprefix plot_, $(PROGRAMS))
+plot_%:
+	@mkdir -p $(GRAPHS_DIR)
 	@python3 $(PYTHON_DIR)/perfs_graphs.py $(CSV_DIR)/perfs_$*.csv
 
-# Lance l'analyse de performances sur tous les programmes
-run: $(addprefix run_, $(PROGRAMS))
-
-# Supprime le répértoire contenant les exécutable .bin
 clean:
 	@rm -rf $(BIN_DIR)
-
-# Supprime le répértoire contenant les exécutable .bin, les graphiques de performances et les fichiers .csv
 clean_all: clean
 	@rm -rf $(CSV_DIR) $(GRAPHS_DIR)

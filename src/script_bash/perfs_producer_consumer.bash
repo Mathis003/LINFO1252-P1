@@ -1,7 +1,7 @@
 EXEC_NAME="bin/producer_consumer.bin"
 CSV_FILE="csv_files/perfs_producer_consumer.csv"
 
-NB_TIMES=9
+NB_TIMES=5
 SEQ_NB_THREADS=(2 4 8 16 32 64)
 TIMES=()
 
