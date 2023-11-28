@@ -14,7 +14,6 @@ pthread_mutex_t mutex;
 sem_t empty, full;
 int idx_buffer = 0;
 
-
 void treatment(void)
 {
     for (int i = 0; i < 10000; i++);
@@ -27,9 +26,9 @@ int produce(void)
 
 void insert_item(int item)
 {
-    printf("Produced : %d\n", item);
     buffer[idx_buffer] = item;
     idx_buffer++;
+    printf("idx_buffer : %d\n", idx_buffer);
 }
 
 void *producer(void *unused)
@@ -38,6 +37,7 @@ void *producer(void *unused)
     while (1)
     {
         item = produce();
+        // printf("Produced : %d\n", item);
         sem_wait(&empty);
         pthread_mutex_lock(&mutex);
 
@@ -49,8 +49,10 @@ void *producer(void *unused)
         }
 
         insert_item(item);
+
         nbProductionsDone++;
         // printf("nbProductionsDone : %d\n", nbProductionsDone);
+
         sem_post(&full);
         pthread_mutex_unlock(&mutex);
 
@@ -63,12 +65,12 @@ int remove_item()
 {
     idx_buffer--;
     int item = buffer[idx_buffer];
-    // printf("Consumed : %d\n", item);
     return item;
 }
 
 void *consumer(void *unused)
 {
+    int item;
     while (1)
     {
         sem_wait(&full);
@@ -81,12 +83,9 @@ void *consumer(void *unused)
             break;
         }
         
-        remove_item();
+        item = remove_item();
+        // printf("Consumed : %d\n", item);
 
-        // printf("buffer : [ ");
-        // for (int i = 0; i < 8; i++) printf("%d ", buffer[i]);
-        // printf(" ]\n");
-        
         nbConsumeDone++;
         // printf("nbConsumeDone : %d\n", nbConsumeDone);
 
@@ -96,6 +95,12 @@ void *consumer(void *unused)
     return NULL;
 }
 
+void destroy_all(void)
+{
+    sem_destroy(&empty);
+    sem_destroy(&full);
+    pthread_mutex_destroy(&mutex);
+}
 
 int main(int argc, char *argv[])
 {
@@ -129,6 +134,7 @@ int main(int argc, char *argv[])
         pthread_mutex_destroy(&mutex);
         return EXIT_FAILURE;
     }
+
     if (sem_init(&full, 0, 0) !=  0)
     {
         perror("sem_init()");
@@ -137,50 +143,42 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    for (int idx_threads = 0; idx_threads < nbProducers; idx_threads++)
+    for (int i = 0; i < nbProducers; i++)
     {
-        if (pthread_create(&producers[idx_threads], NULL, producer, NULL) != 0)
+        if (pthread_create(&producers[i], NULL, producer, NULL) != 0)
         {
             perror("pthread_create()");
-            sem_destroy(&empty);
-            sem_destroy(&full);
-            pthread_mutex_destroy(&mutex);
+            destroy_all();
             return EXIT_FAILURE;
         }
     }
 
-    for (int idx_threads = 0; idx_threads < nbConsumers; idx_threads++)
+    for (int i = 0; i < nbConsumers; i++)
     {
-        if (pthread_create(&consumers[idx_threads], NULL, consumer, NULL) != 0)
+        if (pthread_create(&consumers[i], NULL, consumer, NULL) != 0)
         {
             perror("pthread_create()");
-            sem_destroy(&empty);
-            sem_destroy(&full);
-            pthread_mutex_destroy(&mutex);
+            destroy_all();
             return EXIT_FAILURE;
         }
     }
 
-    for (int idx_threads = 0; idx_threads < nbProducers; idx_threads++)
+    for (int i = 0; i < nbProducers; i++)
     {
-        if (pthread_join(producers[idx_threads], NULL) != 0)
+        if (pthread_join(producers[i], NULL) != 0)
         {
             perror("pthread_join()");
-            sem_destroy(&empty);
-            sem_destroy(&full);
-            pthread_mutex_destroy(&mutex);
+            destroy_all();
             return EXIT_FAILURE;
         }
     }
 
-    for (int idx_threads = 0; idx_threads < nbConsumers; idx_threads++)
+    for (int i = 0; i < nbConsumers; i++)
     {
-        if (pthread_join(consumers[idx_threads], NULL) != 0)
+        if (pthread_join(consumers[i], NULL) != 0)
         {
             perror("pthread_join()");
-            sem_destroy(&empty);
-            sem_destroy(&full);
-            pthread_mutex_destroy(&mutex);
+            destroy_all();
             return EXIT_FAILURE;
         }
     }
