@@ -11,7 +11,7 @@
 pthread_mutex_t writer_mutex, reader_mutex, general_mutex;
 sem_t db_writer, db_reader;
 
-int readsDone, writesDone = 0;
+int readsAuthorized, writesDone = 0;
 int readersCount, writersCount = 0;
 
 void process(void)
@@ -23,14 +23,14 @@ void read_database()
 {
     process();
     printf("Reading...\n");
-    printf("readsDone: %d, writesDone: %d\n", readsDone, writesDone);
+    printf("readsAuthorized: %d, writesDone: %d\n", readsAuthorized, writesDone);
 }
 
 void write_database()
 {
     process();
     printf("Writing...\n");
-    printf("readsDone: %d, writesDone: %d\n", readsDone, writesDone);
+    printf("readsAuthorized: %d, writesDone: %d\n", readsAuthorized, writesDone);
 }
 
 void *reader(void *unused)
@@ -43,30 +43,32 @@ void *reader(void *unused)
 
         pthread_mutex_lock(&reader_mutex);
 
+        if (readsAuthorized >= NB_READS)
+        {
+            pthread_mutex_unlock(&general_mutex);
+            sem_post(&db_reader);
+            pthread_mutex_unlock(&reader_mutex);
+            break;
+        }
+        
+        readsAuthorized++;
         readersCount++;
+        
         if (readersCount == 1)
         {
             sem_wait(&db_writer);
         }
-
+        
         pthread_mutex_unlock(&reader_mutex);
 
         sem_post(&db_reader);
 
         pthread_mutex_unlock(&general_mutex);
 
-        if (readsDone >= NB_READS)
-        {
-            sem_post(&db_writer);
-            sem_post(&db_reader);
-            break;
-        }
-
-        read_database();
+        read_database(); //Critical section
 
         pthread_mutex_lock(&reader_mutex);
 
-        readsDone++;
         readersCount--;
         if (readersCount == 0)
         {
