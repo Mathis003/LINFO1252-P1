@@ -27,6 +27,9 @@ run_%: $(BIN_DIR)/%.bin
 # @bash $(BASH_DIR)/perfs_$*.bash
 # @python3 $(PYTHON_DIR)/perfs_graphs.py $(CSV_DIR)/perfs_$*.csv
 
+graphs: $(BIN_DIR)/%.bin
+	@python3 $(PYTHON_DIR)/perfs_graphs.py $(CSV_DIR)/perfs_$*.csv
+
 # Lance l'analyse de performances sur tous les programmes
 run: $(addprefix run_, $(PROGRAMS))
 

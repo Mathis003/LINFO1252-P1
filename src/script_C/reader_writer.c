@@ -14,16 +14,21 @@ sem_t db_writer, db_reader;
 int readsDone, writesDone = 0;
 int readersCount, writersCount = 0;
 
-void read_database()
+void process(void)
 {
     for (int i = 0; i < 10000; i++);
+}
+
+void read_database()
+{
+    process();
     printf("Reading...\n");
     printf("readsDone: %d, writesDone: %d\n", readsDone, writesDone);
 }
 
 void write_database()
 {
-    for (int i = 0; i < 10000; i++);
+    process();
     printf("Writing...\n");
     printf("readsDone: %d, writesDone: %d\n", readsDone, writesDone);
 }
@@ -32,12 +37,10 @@ void *reader(void *unused)
 {
     while (1)
     {
-        // ** Section Begin : General ** //
         pthread_mutex_lock(&general_mutex);
 
         sem_wait(&db_reader);
 
-        // ** Section Begin : Readers ** //
         pthread_mutex_lock(&reader_mutex);
 
         readersCount++;
@@ -47,12 +50,10 @@ void *reader(void *unused)
         }
 
         pthread_mutex_unlock(&reader_mutex);
-        // ** Section End : Readers ** //
 
         sem_post(&db_reader);
 
         pthread_mutex_unlock(&general_mutex);
-        // ** Section End : General ** //
 
         if (readsDone >= NB_READS)
         {
@@ -63,7 +64,6 @@ void *reader(void *unused)
 
         read_database();
 
-        // ** Section Begin : Readers ** //
         pthread_mutex_lock(&reader_mutex);
 
         readsDone++;
@@ -74,7 +74,6 @@ void *reader(void *unused)
         }
 
         pthread_mutex_unlock(&reader_mutex);
-        // ** Section End : Readers ** //
     }
     return NULL;
 }
@@ -88,8 +87,8 @@ void *writer(void *unused)
 
         if (writesDone == NB_WRITES)
         {
-            sem_post(&db_reader);
             sem_post(&db_writer);
+            sem_post(&db_reader);
             break;
         }
 
@@ -102,13 +101,21 @@ void *writer(void *unused)
     return NULL;
 }
 
+int destroy_sem()
+{
+    int value = 1;
+    if (sem_destroy(&db_writer) != 0) value = 0;
+    if (sem_destroy(&db_reader) != 0) value = 0;
+    return value;
+}
+
 int destroy_all()
 {
-    if (sem_destroy(&db_writer) != 0) return 0;
-    if (sem_destroy(&db_reader) != 0) return 0;
-    if (pthread_mutex_destroy(&writer_mutex) != 0) return 0;
-    if (pthread_mutex_destroy(&reader_mutex) != 0) return 0;
-    return 1;
+    int value = destroy_sem();
+    if (pthread_mutex_destroy(&writer_mutex) != 0) value = 0;
+    if (pthread_mutex_destroy(&reader_mutex) != 0) value = 0;
+    if (pthread_mutex_destroy(&general_mutex) != 0) value = 0;
+    return value;
 }
 
 int main(int argc, char *argv[])
@@ -129,39 +136,36 @@ int main(int argc, char *argv[])
     }
 
     int error = 0;
-    // Semaphore bc sem_wait() and sem_post() are not always called by the same thread!
     error += sem_init(&db_writer, 0, 1);
     error += sem_init(&db_reader, 0, 1);
     if (error != 0)
     {
         perror("sem_init()");
-        sem_destroy(&db_writer);
-        sem_destroy(&db_reader);
+        destroy_sem();
         return EXIT_FAILURE;
     }
 
     if (pthread_mutex_init(&writer_mutex, NULL) != 0)
     {
         perror("pthread_mutex_init()");
-        sem_destroy(&db_writer);
-        sem_destroy(&db_reader);
+        destroy_sem();
         return EXIT_FAILURE;
     }
 
     if (pthread_mutex_init(&reader_mutex, NULL) != 0)
     {
         perror("pthread_mutex_init()");
-        sem_destroy(&db_writer);
-        sem_destroy(&db_reader);
+        pthread_mutex_destroy(&writer_mutex);
+        destroy_sem();
         return EXIT_FAILURE;
     }
 
     if (pthread_mutex_init(&general_mutex, NULL) != 0)
     {
         perror("pthread_mutex_init()");
-        sem_destroy(&db_writer);
-        sem_destroy(&db_reader);
+        destroy_sem();
         pthread_mutex_destroy(&writer_mutex);
+        pthread_mutex_destroy(&reader_mutex);
         return EXIT_FAILURE;
     }
 
@@ -208,11 +212,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (destroy_all() == 0)
-    {
-        perror("destroy_all()");
-        return EXIT_FAILURE;
-    }
-
+    if (destroy_all() == 0) return EXIT_FAILURE;
     return EXIT_SUCCESS;
 }
