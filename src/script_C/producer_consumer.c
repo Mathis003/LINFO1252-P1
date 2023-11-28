@@ -28,7 +28,7 @@ void insert_item(int item)
 {
     buffer[idx_buffer] = item;
     idx_buffer++;
-    printf("idx_buffer : %d\n", idx_buffer);
+    // printf("insert : idx_buffer = %d\n", idx_buffer);
 }
 
 void *producer(void *unused)
@@ -65,6 +65,7 @@ int remove_item()
 {
     idx_buffer--;
     int item = buffer[idx_buffer];
+    // printf("remove : idx_buffer = %d\n", idx_buffer);
     return item;
 }
 
