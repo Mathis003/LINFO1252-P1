@@ -65,4 +65,3 @@ cat $CSV_FILE
 #     echo $TIMES_LINE >> $CSV_FILE
 # done
 # cat $CSV_FILE
-

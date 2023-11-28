@@ -51,7 +51,6 @@ void philosopher_eating(int id, bool rightGreater, pthread_mutex_t *left_baguett
 void philosopher_thinking(int id)
 {
     // printf("Philosopher [%d] is thinking.\n", id);
-    return;
 }
 
 
@@ -75,6 +74,7 @@ void *philosopher_function(void* arg)
 
     free(arg_philosopher);
     // printf("Philosopher [%d] has finished his job.\n", id);
+    return NULL;
 }
 
 
@@ -109,12 +109,15 @@ int main(int argc, char *argv[])
 
     bool rightGreater;
     int i = 0;
-
     for (i = 0; i < NB_PHILOSOPHERS; i++)
     {
         rightGreater = ((i + 1) % NB_PHILOSOPHERS > i) ? true : false;
         void *args = create_arg_philosopher(i, rightGreater, &baguettes[i], &baguettes[(i + 1) % NB_PHILOSOPHERS]);
-        if (args == NULL) return EXIT_FAILURE;
+        if (args == NULL)
+        {
+            for (int j = 0; j < NB_PHILOSOPHERS; j++) pthread_mutex_destroy(&baguettes[j]);
+            return EXIT_FAILURE;
+        }
 
         if (pthread_create(&philosophers[i], NULL, philosopher_function, args) != 0)
         {
