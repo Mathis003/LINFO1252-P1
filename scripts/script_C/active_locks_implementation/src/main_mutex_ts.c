@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include "test_and_set.c"
+#include "mutex_ts.c"
 
 int NBER_ITER;
 
+int counter = 0;
 void process(void)
 {
+    // printf("process\n");
+    counter++;
     for (int i = 0; i < 10000; i++);
 }
 
@@ -14,9 +17,9 @@ void *thread_function(void *arg)
 {
     for (int i = 0; i < NBER_ITER; i++)
     {
-        my_ts_lock();
+        my_ts_mutex_lock();
         process();
-        my_ts_unlock();
+        my_ts_mutex_unlock();
     }
     return NULL;
 }
@@ -40,7 +43,7 @@ int main(int argc, char *argv[])
 
     NBER_ITER = 6400 / NB_THREADS;
 
-    if (my_ts_init() != 0)
+    if (my_ts_mutex_init() != 0)
     {
         perror("my_ts_init()");
         return EXIT_FAILURE;
@@ -64,11 +67,15 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (my_ts_destroy() != 0)
+    if (my_ts_mutex_destroy() != 0)
     {
         perror("my_ts_destroy()");
         return EXIT_FAILURE;
     }
+
+    printf("counter = %d\n", counter);
+
+    
 
     return EXIT_SUCCESS;
 }

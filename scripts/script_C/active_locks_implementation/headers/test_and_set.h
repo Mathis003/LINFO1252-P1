@@ -10,26 +10,10 @@
 #include <stdbool.h> 
 
 
-int my_ts_mutex_init()
-{
-    // TODO
-    return 0;
-}
+int my_ts_mutex_init();
 
-int my_ts_mutex_destroy()
-{
-    // TODO
-    return 0;
-}
+int my_ts_mutex_destroy();
 
-int my_ts_mutex_lock()
-{
-    // TODO
-    return 0;
-}
+int my_ts_mutex_lock();
 
-int my_ts_mutex_unlock()
-{
-    // TODO
-    return;
-}
+int my_ts_mutex_unlock();
