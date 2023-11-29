@@ -93,6 +93,8 @@ void *consumer(void *unused)
 
         sem_post(&empty);
         pthread_mutex_unlock(&mutex);
+
+        process();
     }
     return NULL;
 }

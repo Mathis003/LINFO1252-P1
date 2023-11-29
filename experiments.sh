@@ -2,8 +2,8 @@ NB_TIMES=5
 SEQ_NB_THREADS=(2 4 8 16 32 64)
 TIMES=()
 
-EXEC_NAME="bin/reader_writer.bin"
-CSV_FILE="csv_files/perfs_reader_writer.csv"
+EXEC_NAME="bin/producer_consumer.bin"
+CSV_FILE="csv_files/perfs_producer_consumer.csv"
 echo $CSV_FILE
 TITLE_COLUMNS=$(printf "NbThreads%s" $(for ((i=1; i<=$NB_TIMES; i++)); do printf ",Time%d" $i; done))
 echo $TITLE_COLUMNS > $CSV_FILE
