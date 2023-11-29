@@ -10,7 +10,7 @@ CSV_DIR=csv_files
 GRAPHS_DIR=graphs
 BIN_DIR=bin
 
-PROGRAMS=producer_consumer philosopher reader_writer
+PROGRAMS=producer_consumer philosopher reader_writer test_and_set
 
 .PRECIOUS: $(BIN_DIR)/%.bin
 
@@ -24,7 +24,7 @@ run_%:
 csv: $(addprefix csv_, $(PROGRAMS))
 csv_%:
 	@mkdir -p $(CSV_DIR)
-	@bash $(BASH_DIR)/perfs_$*.bash
+	@bash $(BASH_DIR)/perfs_$*.sh
 
 plot: $(addprefix plot_, $(PROGRAMS))
 plot_%:

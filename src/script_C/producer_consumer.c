@@ -14,7 +14,7 @@ pthread_mutex_t mutex;
 sem_t empty, full;
 int idx_buffer = 0;
 
-void treatment(void)
+void process(void)
 {
     for (int i = 0; i < 10000; i++);
 }
@@ -33,11 +33,11 @@ void insert_item(int item)
 
 void *producer(void *unused)
 {
-    int item;
     while (1)
     {
-        item = produce();
+        int item = produce();
         // printf("Produced : %d\n", item);
+
         sem_wait(&empty);
         pthread_mutex_lock(&mutex);
 
@@ -56,7 +56,7 @@ void *producer(void *unused)
         sem_post(&full);
         pthread_mutex_unlock(&mutex);
 
-        treatment();
+        process();
     }
     return NULL;
 }
@@ -64,14 +64,14 @@ void *producer(void *unused)
 int remove_item()
 {
     idx_buffer--;
-    int item = buffer[idx_buffer];
+    // int item = buffer[idx_buffer];
     // printf("remove : idx_buffer = %d\n", idx_buffer);
-    return item;
+    return buffer[idx_buffer];
 }
 
 void *consumer(void *unused)
 {
-    int item;
+    // int item;
     while (1)
     {
         sem_wait(&full);
@@ -84,7 +84,8 @@ void *consumer(void *unused)
             break;
         }
         
-        item = remove_item();
+        remove_item();
+        // item = remove_item();
         // printf("Consumed : %d\n", item);
 
         nbConsumeDone++;
