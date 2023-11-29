@@ -5,6 +5,10 @@
 #include <stdint.h>
 #include <semaphore.h>
 
+#include "../../active_locks_implementation/headers/test_and_set.h"
+#include "../../active_locks_implementation/headers/test_and_test_and_set.h"
+#include "../../active_locks_implementation/headers/sem.h"
+
 #define NB_PRODUCTIONS 8192
 #define CAPACITY_BUFFER 8
 

@@ -5,6 +5,10 @@
 #include <stdint.h>
 #include <semaphore.h>
 
+#include "../../active_locks_implementation/headers/test_and_set.h"
+#include "../../active_locks_implementation/headers/test_and_test_and_set.h"
+#include "../../active_locks_implementation/headers/sem.h"
+
 #define NB_READS 2560
 #define NB_WRITES 640
 

@@ -1,18 +1,5 @@
 #include "../../headers/philosopher.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <pthread.h>
-#include <stdbool.h>
-
-typedef struct args_philosopher
-{
-    int id;
-    bool rightGreater;
-    pthread_mutex_t *left_baguette;
-    pthread_mutex_t *right_baguette;
-} args_philosopher_t;
-
 
 void *create_arg_philosopher(int id, bool rightGreater, pthread_mutex_t *left_baguette, pthread_mutex_t *right_baguette)
 {

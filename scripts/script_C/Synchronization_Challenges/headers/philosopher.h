@@ -3,6 +3,9 @@
 #include <pthread.h>
 #include <stdbool.h>
 
+#include "../../active_locks_implementation/headers/test_and_set.h"
+#include "../../active_locks_implementation/headers/test_and_test_and_set.h"
+
 typedef struct args_philosopher
 {
     int id;

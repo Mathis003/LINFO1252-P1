@@ -1,4 +1,4 @@
-#include "../headers/philosopher_ts.h"
+#include "../../headers/philosopher.h"
 
 
 void *create_arg_philosopher(int id, bool rightGreater, pthread_mutex_t *left_baguette, pthread_mutex_t *right_baguette)
