@@ -3,22 +3,24 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
 #include <stdint.h>
-#include <semaphore.h>
+#include <pthread.h>
 
-#include "../../active_locks_implementation/headers/test_and_set.h"
-#include "../../active_locks_implementation/headers/test_and_test_and_set.h"
-#include "../../active_locks_implementation/headers/sem.h"
+#include "../../mutex/mutex.h"
 
 #define NB_PRODUCTIONS 8192
 #define CAPACITY_BUFFER 8
 
 int buffer[CAPACITY_BUFFER];
 int nbProductionsDone, nbConsumeDone = 0;
-pthread_mutex_t mutex;
 sem_t empty, full;
 int idx_buffer = 0;
+
+#ifdef POSIX
+pthread_mutex_t mutex;
+#else
+my_mutex_t mutex;
+#endif
 
 void process(void);
 

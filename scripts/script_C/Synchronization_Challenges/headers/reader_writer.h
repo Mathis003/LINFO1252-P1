@@ -11,7 +11,12 @@
 #define NB_READS 2560
 #define NB_WRITES 640
 
+#ifdef POSIX
 pthread_mutex_t writer_mutex, reader_mutex, general_mutex;
+#else
+my_mutex_t writer_mutex, reader_mutex, general_mutex;
+#endif
+
 sem_t db_writer, db_reader;
 
 int readsDone, writesDone = 0;

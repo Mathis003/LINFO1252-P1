@@ -23,17 +23,17 @@ void *reader(void *unused)
 {
     while (1)
     {
-        pthread_mutex_lock(&general_mutex);
+        lock(&general_mutex);
 
         sem_wait(&db_reader);
 
-        pthread_mutex_lock(&reader_mutex);
+        lock(&reader_mutex);
 
         if (readsDone == NB_READS)
         {
-            pthread_mutex_unlock(&general_mutex);
+            unlock(&general_mutex);
             sem_post(&db_reader);
-            pthread_mutex_unlock(&reader_mutex);
+            unlock(&reader_mutex);
             break;
         }
         
@@ -45,15 +45,15 @@ void *reader(void *unused)
             sem_wait(&db_writer);
         }
         
-        pthread_mutex_unlock(&reader_mutex);
+        unlock(&reader_mutex);
 
         sem_post(&db_reader);
 
-        pthread_mutex_unlock(&general_mutex);
+        unlock(&general_mutex);
 
         read_database();
 
-        pthread_mutex_lock(&reader_mutex);
+        lock(&reader_mutex);
 
         readersCount--;
         if (readersCount == 0)
@@ -61,7 +61,7 @@ void *reader(void *unused)
             sem_post(&db_writer);
         }
 
-        pthread_mutex_unlock(&reader_mutex);
+        unlock(&reader_mutex);
     }
     return NULL;
 }
@@ -100,9 +100,9 @@ int destroy_sem()
 int destroy_all()
 {
     int value = destroy_sem();
-    if (pthread_mutex_destroy(&writer_mutex) != 0) value = 0;
-    if (pthread_mutex_destroy(&reader_mutex) != 0) value = 0;
-    if (pthread_mutex_destroy(&general_mutex) != 0) value = 0;
+    if (destroy(&writer_mutex) != 0) value = 0;
+    if (destroy(&reader_mutex) != 0) value = 0;
+    if (destroy(&general_mutex) != 0) value = 0;
     return value;
 }
 
@@ -133,27 +133,28 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    if (pthread_mutex_init(&writer_mutex, NULL) != 0)
+
+    if (init(&writer_mutex) != 0)
     {
-        perror("pthread_mutex_init()");
+        perror("init()");
         destroy_sem();
         return EXIT_FAILURE;
     }
 
-    if (pthread_mutex_init(&reader_mutex, NULL) != 0)
+    if (init(&reader_mutex) != 0)
     {
-        perror("pthread_mutex_init()");
-        pthread_mutex_destroy(&writer_mutex);
+        perror("init()");
+        destroy(&writer_mutex);
         destroy_sem();
         return EXIT_FAILURE;
     }
 
-    if (pthread_mutex_init(&general_mutex, NULL) != 0)
+    if (init(&general_mutex) != 0)
     {
-        perror("pthread_mutex_init()");
+        perror("init()");
         destroy_sem();
-        pthread_mutex_destroy(&writer_mutex);
-        pthread_mutex_destroy(&reader_mutex);
+        destroy(&writer_mutex);
+        destroy(&reader_mutex);
         return EXIT_FAILURE;
     }
 

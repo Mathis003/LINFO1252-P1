@@ -25,12 +25,12 @@ void *producer(void *unused)
         // printf("Produced : %d\n", item);
 
         sem_wait(&empty);
-        pthread_mutex_lock(&mutex);
+        lock(&mutex);
 
         if (nbProductionsDone == NB_PRODUCTIONS)
         {
             sem_post(&full);
-            pthread_mutex_unlock(&mutex);
+            unlock(&mutex);
             break;
         }
 
@@ -40,7 +40,7 @@ void *producer(void *unused)
         // printf("nbProductionsDone : %d\n", nbProductionsDone);
 
         sem_post(&full);
-        pthread_mutex_unlock(&mutex);
+        unlock(&mutex);
 
         process();
     }
@@ -61,12 +61,12 @@ void *consumer(void *unused)
     while (1)
     {
         sem_wait(&full);
-        pthread_mutex_lock(&mutex);
+        lock(&mutex);
 
         if (nbConsumeDone == NB_PRODUCTIONS)
         {
             sem_post(&empty);
-            pthread_mutex_unlock(&mutex);
+            unlock(&mutex);
             break;
         }
         
@@ -78,7 +78,7 @@ void *consumer(void *unused)
         // printf("nbConsumeDone : %d\n", nbConsumeDone);
 
         sem_post(&empty);
-        pthread_mutex_unlock(&mutex);
+        unlock(&mutex);
 
         process();
     }
@@ -89,7 +89,7 @@ void destroy_all(void)
 {
     sem_destroy(&empty);
     sem_destroy(&full);
-    pthread_mutex_destroy(&mutex);
+    destroy(&mutex);
 }
 
 int main(int argc, char *argv[])
@@ -109,9 +109,9 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    if (pthread_mutex_init(&mutex, NULL) != 0)
+    if (init(&mutex) != 0)
     {
-        perror("pthread_mutex_init()");
+        perror("init()");
         return EXIT_FAILURE;
     }
 
@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
     if (sem_init(&empty, 0, CAPACITY_BUFFER) != 0)
     {
         perror("sem_init()");
-        pthread_mutex_destroy(&mutex);
+        destroy(&mutex);
         return EXIT_FAILURE;
     }
 
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
     {
         perror("sem_init()");
         sem_destroy(&empty);
-        pthread_mutex_destroy(&mutex);
+        destroy(&mutex);
         return EXIT_FAILURE;
     }
 
@@ -173,9 +173,9 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (pthread_mutex_destroy(&mutex) != 0)
+    if (destroy(&mutex) != 0)
     {
-        perror("pthread_mutex_destroy()");
+        perror("destroy()");
         sem_destroy(&empty);
         sem_destroy(&full);
         return EXIT_FAILURE;
