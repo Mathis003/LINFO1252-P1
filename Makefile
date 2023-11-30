@@ -21,7 +21,6 @@ DEPENDENCIES_PROGRAMS_TTS_NAME=my_mutex_tts my_sem mutex
 DEPENDENCIES_PROGRAMS_TTS=$(addsuffix .c, $(addprefix $(C_DIR)/, $(DEPENDENCIES_PROGRAMS_TTS_NAME)))
 
 NB_THREADS?=1
-
 HALF_THREADS=$(shell echo $$(( $(NB_THREADS) / 2 )))
 
 .PRECIOUS: $(BIN_DIR)/%.bin
@@ -33,7 +32,7 @@ all: run csv plot
 
 ### Build : BEGIN ###
 
-build: build_philosopher build_reader_writer build_producer_consumer clean_libraries
+build: build_philosopher build_reader_writer build_producer_consumer
 
 
 build_philosopher: build_philosopher_POSIX build_philosopher_TS build_philosopher_TTS
@@ -123,21 +122,12 @@ run_main_my_mutex_TTS:
 
 ### Clean : BEGIN ###
 
-clean_all:
-	@$(clean)
+clean:
+	@rm -rf $(BIN_DIR)
+	
+clean_all: clean
 	rm -rf $(GRAPHS_DIR)
 	rm -rf $(CSV_DIR)
-
-clean:
-	@$(clean_libraries)
-	@$(clean_programs)
-	@rm -rf $(BIN_DIR)
-
-clean_programs:
-	rm -f $(PROGRAMS)
-
-clean_libraries:
-	rm -f $(LIBRARIES_PROGRAMS)
 
 ### Clean : END ###
 
