@@ -22,11 +22,16 @@ DEPENDENCIES_PROGRAMS_TTS=$(addsuffix .c, $(addprefix $(C_DIR)/, $(DEPENDENCIES_
 
 NB_THREADS?=1
 
+HALF_THREADS=$(shell echo $$(( $(NB_THREADS) / 2 )))
+
 .PRECIOUS: $(BIN_DIR)/%.bin
 .PHONY: all build build_% run clean clean_all run csv
 
 
 all: run csv plot
+
+
+### Build : BEGIN ###
 
 build: build_philosopher build_reader_writer build_producer_consumer clean_libraries
 
@@ -75,45 +80,48 @@ build_main_my_mutex_TS: $(C_DIR)/main_my_mutex.c $(DEPENDENCIES_PROGRAMS_TS) | $
 build_main_my_mutex_TTS: $(C_DIR)/main_my_mutex.c $(DEPENDENCIES_PROGRAMS_TTS) | $(BIN_DIR)
 	@$(CC) -D TTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/main_my_mutex_TTS.bin $^
 
+### Build : END ###
 
+
+### Run : BEGIN ###
 
 run_philosopher_POSIX:
-	./$(BIN_DIR)/philosopher_POSIX.bin $(NB_THREADS)
+	@./$(BIN_DIR)/philosopher_POSIX.bin $(NB_THREADS)
 
 run_philosopher_TS:
-	./$(BIN_DIR)/philosopher_TS.bin $(NB_THREADS)
+	@./$(BIN_DIR)/philosopher_TS.bin $(NB_THREADS)
 
 run_philosopher_TTS:
-	./$(BIN_DIR)/philosopher_TTS.bin $(NB_THREADS)
-
-
-
-HALF_THREADS = $(shell echo $$(( $(NB_THREADS) / 2 )))
+	@./$(BIN_DIR)/philosopher_TTS.bin $(NB_THREADS)
 
 run_producer_consumer_POSIX:
-	./$(BIN_DIR)/producer_consumer_POSIX.bin $(HALF_THREADS) $(HALF_THREADS)
+	@./$(BIN_DIR)/producer_consumer_POSIX.bin $(HALF_THREADS) $(HALF_THREADS)
+
 run_producer_consumer_TS:
-	./$(BIN_DIR)/producer_consumer_TS.bin $(HALF_THREADS) $(HALF_THREADS)
+	@./$(BIN_DIR)/producer_consumer_TS.bin $(HALF_THREADS) $(HALF_THREADS)
 
 run_producer_consumer_TTS:
-	./$(BIN_DIR)/producer_consumer_TTS.bin $(HALF_THREADS) $(HALF_THREADS)
+	@./$(BIN_DIR)/producer_consumer_TTS.bin $(HALF_THREADS) $(HALF_THREADS)
 
 run_reader_writer_POSIX:
-	./$(BIN_DIR)/reader_writer_POSIX.bin $(HALF_THREADS) $(HALF_THREADS)
+	@./$(BIN_DIR)/reader_writer_POSIX.bin $(HALF_THREADS) $(HALF_THREADS)
 
 run_reader_writer_TS:
-	./$(BIN_DIR)/reader_writer_TS.bin $(HALF_THREADS) $(HALF_THREADS)
+	@./$(BIN_DIR)/reader_writer_TS.bin $(HALF_THREADS) $(HALF_THREADS)
 
 run_reader_writer_TTS:
-	./$(BIN_DIR)/reader_writer_TTS.bin $(HALF_THREADS) $(HALF_THREADS)
+	@./$(BIN_DIR)/reader_writer_TTS.bin $(HALF_THREADS) $(HALF_THREADS)
 
 run_main_my_mutex_TS:
-	./$(BIN_DIR)/main_my_mutex_TS.bin $(NB_THREADS)
+	@./$(BIN_DIR)/main_my_mutex_TS.bin $(NB_THREADS)
 
 run_main_my_mutex_TTS:
-	./$(BIN_DIR)/main_my_mutex_TTS.bin $(NB_THREADS)
+	@./$(BIN_DIR)/main_my_mutex_TTS.bin $(NB_THREADS)
+
+### Run : END ###
 
 
+### Clean : BEGIN ###
 
 clean_all:
 	@$(clean)
@@ -131,7 +139,7 @@ clean_programs:
 clean_libraries:
 	rm -f $(LIBRARIES_PROGRAMS)
 
-
+### Clean : END ###
 
 
 csv: $(addprefix csv_, $(PROGRAMS))
