@@ -1,6 +1,10 @@
 #ifndef MUTEX_H
 #define MUTEX_H
 
+#ifndef MA_MACRO
+#define MA_MACRO valeur_par_defaut
+#endif
+
 #ifdef TS_MUTEX
 #include "my_mutex_ts.h"
 #include "my_sem.h"
