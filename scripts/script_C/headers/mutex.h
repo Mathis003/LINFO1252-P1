@@ -2,11 +2,11 @@
 #define MUTEX_H
 
 #ifdef TS_MUTEX
-#include "../active_locks_implementation/headers/my_mutex_ts.h"
-#include "../active_locks_implementation/headers/my_sem.h"
+#include "my_mutex_ts.h"
+#include "my_sem.h"
 #elif TTS_MUTEX
-#include "../active_locks_implementation/headers/my_mutex_tts.h"
-#include "../active_locks_implementation/headers/my_sem.h"
+#include "my_mutex_tts.h"
+#include "my_sem.h"
 #else
 #include <stddef.h>
 #include <semaphore.h>

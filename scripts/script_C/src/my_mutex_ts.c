@@ -18,7 +18,6 @@ int my_mutex_destroy(my_mutex_t *my_mutex)
 }
 
 
-
 // enter:
 //     movl $1, %eax ; %eax=1
 //     xchgl %eax, (lock)  ; instruction atomique, échange (lock) et %eax
@@ -29,6 +28,7 @@ int my_mutex_destroy(my_mutex_t *my_mutex)
 //     ret
 int my_mutex_lock(my_mutex_t *my_mutex)
 {
+    /*
     long eax;
     asm volatile(
         "1: \n\t"
@@ -42,6 +42,8 @@ int my_mutex_lock(my_mutex_t *my_mutex)
         : "cc"
     );
     return eax;
+    */
+   return 0;
 }
 
 // leave:
@@ -50,6 +52,7 @@ int my_mutex_lock(my_mutex_t *my_mutex)
 //     ret
 int my_mutex_unlock(my_mutex_t *my_mutex)
 {
+    /*
     long eax;
     asm volatile(
         "movl $0, %%eax \n\t"
@@ -58,4 +61,6 @@ int my_mutex_unlock(my_mutex_t *my_mutex)
         : "+m" (lock), "=a" (eax)
     );
     return eax;
+    */
+   return 0;
 }

@@ -1,4 +1,4 @@
-#include "mutex.h"
+#include "../headers/mutex.h"
 
 int init_mutex(void *mutex)
 {

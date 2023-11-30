@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct my_sem {
+typedef struct my_sem {
     int todo;
-} typedef my_sem_t;
+} my_sem_t;
 
 int my_sem_init(my_sem_t *sem, int pshared, unsigned int value);
 

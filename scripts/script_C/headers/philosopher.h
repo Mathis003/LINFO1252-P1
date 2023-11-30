@@ -6,7 +6,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-#include "../../mutex/mutex.h"
+#include "mutex.h"
 
 typedef struct args_philosopher
 {

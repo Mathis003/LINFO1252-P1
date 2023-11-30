@@ -1,10 +1,10 @@
-#ifndef MAIN_MUTEX_H
-#define MAIN_MUTEX_H
+#ifndef MAIN_MY_MUTEX_H
+#define MAIN_MY_MUTEX_H
 
 #include <stdlib.h>
 #include <pthread.h>
 
-#include "../../mutex/mutex.h"
+#include "mutex.h"
 
 int NBER_ITER;
 
@@ -14,4 +14,4 @@ void *thread_function(void *arg);
 
 int main(int argc, char *argv[]);
 
-#endif // MAIN_MUTEX_H
+#endif // MAIN_MY_MUTEX_H

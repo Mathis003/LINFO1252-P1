@@ -6,20 +6,21 @@
 #include <stdint.h>
 #include <pthread.h>
 
-#include "../../mutex/mutex.h"
+#include "mutex.h"
 
 #define NB_PRODUCTIONS 8192
 #define CAPACITY_BUFFER 8
 
 int buffer[CAPACITY_BUFFER];
 int nbProductionsDone, nbConsumeDone = 0;
-sem_t empty, full;
 int idx_buffer = 0;
 
 #ifdef POSIX
 pthread_mutex_t mutex;
+sem_t empty, full;
 #else
 my_mutex_t mutex;
+my_sem_t empty, full;
 #endif
 
 void process(void);

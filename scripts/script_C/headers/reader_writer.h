@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <pthread.h>
 
-#include "../../mutex/mutex.h"
+#include "mutex.h"
 
 #define NB_READS 2560
 #define NB_WRITES 640
