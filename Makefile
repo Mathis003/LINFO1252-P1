@@ -77,7 +77,6 @@ build_main_my_mutex_TTS: $(C_DIR)/main_my_mutex.c $(DEPENDENCIES_PROGRAMS_TTS) |
 
 
 
-
 run_philosopher_POSIX:
 	./$(BIN_DIR)/philosopher_POSIX.bin $(NB_THREADS)
 
@@ -87,23 +86,26 @@ run_philosopher_TS:
 run_philosopher_TTS:
 	./$(BIN_DIR)/philosopher_TTS.bin $(NB_THREADS)
 
-run_producer_consumer_POSIX:
-	./$(BIN_DIR)/producer_consumer_POSIX.bin $(NB_THREADS)/2 $(NB_THREADS)/2
 
+
+HALF_THREADS = $(shell echo $$(( $(NB_THREADS) / 2 )))
+
+run_producer_consumer_POSIX:
+	./$(BIN_DIR)/producer_consumer_POSIX.bin $(HALF_THREADS) $(HALF_THREADS)
 run_producer_consumer_TS:
-	./$(BIN_DIR)/producer_consumer_TS.bin $(NB_THREADS)/2 $(NB_THREADS)/2
+	./$(BIN_DIR)/producer_consumer_TS.bin $(HALF_THREADS) $(HALF_THREADS)
 
 run_producer_consumer_TTS:
-	./$(BIN_DIR)/producer_consumer_TTS.bin $(NB_THREADS)/2 $(NB_THREADS)/2
+	./$(BIN_DIR)/producer_consumer_TTS.bin $(HALF_THREADS) $(HALF_THREADS)
 
 run_reader_writer_POSIX:
-	./$(BIN_DIR)/reader_writer_POSIX.bin $(NB_THREADS)/2 $(NB_THREADS)/2
+	./$(BIN_DIR)/reader_writer_POSIX.bin $(HALF_THREADS) $(HALF_THREADS)
 
 run_reader_writer_TS:
-	./$(BIN_DIR)/reader_writer_TS.bin $(NB_THREADS)/2 $(NB_THREADS)/2
+	./$(BIN_DIR)/reader_writer_TS.bin $(HALF_THREADS) $(HALF_THREADS)
 
 run_reader_writer_TTS:
-	./$(BIN_DIR)/reader_writer_TTS.bin $(NB_THREADS)/2 $(NB_THREADS)/2
+	./$(BIN_DIR)/reader_writer_TTS.bin $(HALF_THREADS) $(HALF_THREADS)
 
 run_main_my_mutex_TS:
 	./$(BIN_DIR)/main_my_mutex_TS.bin $(NB_THREADS)
