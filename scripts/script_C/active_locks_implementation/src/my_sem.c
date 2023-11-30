@@ -1,11 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdbool.h> 
-
-struct my_sem {
-    // TODO
-} typedef my_sem_t;
+#include "../headers/my_sem.h"
 
 int my_sem_init(my_sem_t *sem, int pshared, unsigned int value)
 {

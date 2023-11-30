@@ -1,29 +1,5 @@
 #include "../headers/main_mutex.h"
 
-#define TS_MUTEX
-
-#ifdef TS_MUTEX
-    #include "../headers/test_and_set.h"
-    #define init_mutex my_mutex_ts_init
-    #define destroy_mutex my_mutex_ts_destroy
-    #define lock_mutex my_mutex_ts_lock
-    #define unlock_mutex my_mutex_ts_unlock
-#else
-    #include "../headers/test_and_test_and_set.h"
-    #define init_mutex my_mutex_tts_init
-    #define destroy_mutex my_mutex_tts_destroy
-    #define lock_mutex my_mutex_tts_lock
-    #define unlock_mutex my_mutex_tts_unlock
-#endif
-
-
-void init_mutex();
-void destroy_mutex();
-void lock_mutex();
-void unlock_mutex();
-
-int NBER_ITER;
-
 void process(void)
 {
     for (int i = 0; i < 10000; i++);
@@ -61,7 +37,7 @@ int main(int argc, char *argv[])
 
     if (init_mutex() != 0)
     {
-        perror("my_tts_init()");
+        perror("init_mutex()");
         return EXIT_FAILURE;
     }
 
@@ -85,7 +61,7 @@ int main(int argc, char *argv[])
 
     if (destroy_mutex() != 0)
     {
-        perror("my_tts_destroy()");
+        perror("destroy_mutex()");
         return EXIT_FAILURE;
     }
 

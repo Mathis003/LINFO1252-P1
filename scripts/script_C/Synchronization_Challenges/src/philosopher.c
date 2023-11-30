@@ -22,26 +22,21 @@ void *create_arg_philosopher(int id, bool rightGreater, void *left_baguette, voi
 
 void philosopher_eating(int id, bool rightGreater, void *left_baguette, void *right_baguette)
 {
-    //printf("Lock\n");
     if (rightGreater)
     {
-        //printf("ok1\n");
-        lock(left_baguette);
-        lock(right_baguette);
+        lock_mutex(left_baguette);
+        lock_mutex(right_baguette);
     }
     else
     {
-        //printf("ok2\n");
-        lock(right_baguette);
-        lock(left_baguette);
+        lock_mutex(right_baguette);
+        lock_mutex(left_baguette);
     }
 
     // printf("Philosopher [%d] is eating\n", id);
 
-    unlock(left_baguette);
-    unlock(right_baguette);
-
-    //printf("Unlock\n");
+    unlock_mutex(left_baguette);
+    unlock_mutex(right_baguette);
 }
 
 
@@ -67,8 +62,6 @@ void *philosopher_function(void* arg)
 
         // Philosopher eats
         philosopher_eating(id, rightGreater, left_baguette, right_baguette);
-
-        //printf("%d\n", i);
     }
 
     free(arg_philosopher);
@@ -103,9 +96,9 @@ int main(int argc, char *argv[])
 
     for (int i = 0; i < NB_PHILOSOPHERS; i++)
     {
-        if (init(&baguettes[i]) != 0)
+        if (init_mutex(&baguettes[i]) != 0)
         {
-            perror("init()");
+            perror("init_mutex()");
             return EXIT_FAILURE;
         }
     }
@@ -118,7 +111,7 @@ int main(int argc, char *argv[])
         void *args = create_arg_philosopher(i, rightGreater, &baguettes[i], &baguettes[(i + 1) % NB_PHILOSOPHERS]);
         if (args == NULL)
         {
-            for (int j = 0; j < NB_PHILOSOPHERS; j++) destroy(&baguettes[j]);
+            for (int j = 0; j < NB_PHILOSOPHERS; j++) destroy_mutex(&baguettes[j]);
             return EXIT_FAILURE;
         }
 
@@ -126,7 +119,7 @@ int main(int argc, char *argv[])
         {
             perror("pthread_create()");
             free(args);
-            for (int j = 0; j < NB_PHILOSOPHERS; j++) destroy(&baguettes[j]);
+            for (int j = 0; j < NB_PHILOSOPHERS; j++) destroy_mutex(&baguettes[j]);
             return EXIT_FAILURE;
         }
     }
@@ -136,7 +129,7 @@ int main(int argc, char *argv[])
         if (pthread_join(philosophers[i], NULL) != 0)
         {
             perror("pthread_join()");
-            for (int j = 0; j < NB_PHILOSOPHERS; j++) destroy(&baguettes[j]);
+            for (int j = 0; j < NB_PHILOSOPHERS; j++) destroy_mutex(&baguettes[j]);
             return EXIT_FAILURE;
         }
     }
@@ -146,12 +139,12 @@ int main(int argc, char *argv[])
     int error = 0;
     for (int i = 0; i < NB_PHILOSOPHERS; i++)
     {
-        if (destroy(&baguettes[i]) != 0) error = 1;
+        if (destroy_mutex(&baguettes[i]) != 0) error = 1;
     }
 
     if (error)
     {
-        perror("destroy()");
+        perror("destroy_mutex()");
         return EXIT_FAILURE;
     }
 

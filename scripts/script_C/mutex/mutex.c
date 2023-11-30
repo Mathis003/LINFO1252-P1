@@ -56,7 +56,7 @@ int init_sem(void *sem, int pshared, unsigned int value)
 {
     int result;
     #ifdef POSIX
-    sem_t *POSIX_sem = (sem_t *) ;
+    sem_t *POSIX_sem = (sem_t *) sem;
     result = sem_init(POSIX_sem, pshared, value);
     #else
     my_sem_t *my_sem = (my_sem_t *) sem;
@@ -69,7 +69,7 @@ int wait_sem(void *sem)
 {
     int result;
     #ifdef POSIX
-    sem_t *POSIX_sem = (sem_t *) ;
+    sem_t *POSIX_sem = (sem_t *) sem;
     result = sem_wait(POSIX_sem);
     #else
     my_sem_t *my_sem = (my_sem_t *) sem;
@@ -82,7 +82,7 @@ int post_sem(void *sem)
 {
     int result;
     #ifdef POSIX
-    sem_t *POSIX_sem = (sem_t *) ;
+    sem_t *POSIX_sem = (sem_t *) sem;
     result = sem_post(POSIX_sem);
     #else
     my_sem_t *my_sem = (my_sem_t *) sem;
@@ -95,7 +95,7 @@ int destroy_sem(void *sem)
 {
     int result;
     #ifdef POSIX
-    sem_t *POSIX_sem = (sem_t *) ;
+    sem_t *POSIX_sem = (sem_t *) sem;
     result = sem_destroy(POSIX_sem);
     #else
     my_sem_t *my_sem = (my_sem_t *) sem;
