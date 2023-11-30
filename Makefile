@@ -24,7 +24,22 @@ NB_THREADS?=1
 HALF_THREADS=$(shell echo $$(( $(NB_THREADS) / 2 )))
 
 .PRECIOUS: $(BIN_DIR)/%.bin
-.PHONY: all build build_% run clean clean_all run csv
+.PHONY: all build clean clean_all csv make_csv_% \\
+		build_philosopher build_philosopher_POSIX build_philosopher_TS build_philosopher_TTS \\
+		build_reader_writer build_reader_writer_POSIX build_reader_writer_TS build_reader_writer_TTS \\
+		build_producer_consumer build_producer_consumer_POSIX build_producer_consumer_TS build_producer_consumer_TTS \\
+		build_main_my_mutex build_main_my_mutex_TS build_main_my_mutex_TTS \\
+		run_philosopher_POSIX run_philosopher_TS run_philosopher_TTS \\
+		run_reader_writer_POSIX run_reader_writer_TS run_reader_writer_TTS \\
+		run_producer_consumer_POSIX run_producer_consumer_TS run_producer_consumer_TTS \\
+		run_main_my_mutex_TS run_main_my_mutex_TTS \\
+		csv_philosopher csv_philosopher_POSIX csv_philosopher_TS csv_philosopher_TTS \\
+		csv_reader_writer csv_reader_writer_POSIX csv_reader_writer_TS csv_reader_writer_TTS \\
+		csv_producer_consumer csv_producer_consumer_POSIX csv_producer_consumer_TS csv_producer_consumer_TTS \\
+		csv_main_my_mutex csv_main_my_mutex_TS csv_main_my_mutex_TTS \\
+
+
+
 
 
 all: run csv plot
@@ -124,7 +139,7 @@ run_main_my_mutex_TTS:
 
 clean:
 	@rm -rf $(BIN_DIR)
-	
+
 clean_all: clean
 	rm -rf $(GRAPHS_DIR)
 	rm -rf $(CSV_DIR)
@@ -132,57 +147,40 @@ clean_all: clean
 ### Clean : END ###
 
 
-csv: $(addprefix csv_, $(PROGRAMS))
+### CSV : BEGIN ###
 
-make_csv_%:
-	@bash $(BASH_DIR)/perfs_$*.sh
+csv: csv_reader_writer csv_main_my_mutex csv_producer_consumer csv_philosopher
+
+one_arg_%:
+	@bash $(BASH_DIR)/perfs_one_arg.sh $(BIN_DIR)/$*.bin $(CSV_DIR)/perfs_$*.csv
+
+two_args_%:
+	@bash $(BASH_DIR)/perfs_two_args.sh $(BIN_DIR)/$*.bin $(CSV_DIR)/perfs_$*.csv
 
 csv_philosopher: csv_philosopher_POSIX csv_philosopher_TS csv_philosopher_TTS
-
-csv_philosopher_POSIX:
-	$(make_csv_philosopher_POSIX)
-
-csv_philosopher_TS:
-	$(make_csv_philosopher_TS)
-
-csv_philosopher_TTS:
-	$(make_csv_philosopher_TTS)
-
+csv_philosopher_POSIX: one_arg_philosopher_POSIX
+csv_philosopher_TS: one_arg_philosopher_TS
+csv_philosopher_TTS: one_arg_philosopher_TTS
 
 csv_reader_writer: csv_reader_writer_POSIX csv_reader_writer_TS csv_reader_writer_TTS
-
-csv_reader_writer_POSIX:
-	$(make_csv_reader_writer_POSIX)
-
-csv_reader_writer_TS:
-	$(make_csv_reader_writer_TS)
-
-csv_reader_writer_TTS:
-	$(make_csv_reader_writer_TTS)
-
+csv_reader_writer_POSIX: two_args_reader_writer_POSIX
+csv_reader_writer_TS: two_args_reader_writer_TS
+csv_reader_writer_TTS: two_args_reader_writer_TTS
 
 csv_producer_consumer: csv_producer_consumer_POSIX csv_producer_consumer_TS csv_producer_consumer_TTS
-
-csv_producer_consumer_POSIX:
-	$(make_csv_producer_consumer_POSIX)
-
-csv_producer_consumer_TS:
-	$(make_csv_producer_consumer_TS)
-
-csv_producer_consumer_TTS:
-	$(make_csv_producer_consumer_TTS)
-
+csv_producer_consumer_POSIX: two_args_producer_consumer_POSIX
+csv_producer_consumer_TS: two_args_producer_consumer_TS
+csv_producer_consumer_TTS: two_args_producer_consumer_TTS
 
 csv_main_my_mutex: csv_main_my_mutex_TS csv_main_my_mutex_TTS
+csv_main_my_mutex_TS: one_arg_main_my_mutex_TS
+csv_main_my_mutex_TTS: one_arg_main_my_mutex_TTS
 
-csv_main_my_mutex_TS:
-	$(make_csv_main_my_mutex_TS)
-
-csv_main_my_mutex_TTS:
-	$(make_csv_main_my_mutex_TTS)
+### CSV : END ###
 
 
 
+### PLOT : BEGIN ###
 
 plot: $(addprefix plot_, $(PROGRAMS))
 plot_%:
@@ -191,3 +189,5 @@ plot_%:
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
+
+### PLOT : END ###
