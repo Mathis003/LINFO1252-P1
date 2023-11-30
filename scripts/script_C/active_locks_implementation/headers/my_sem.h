@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 struct my_sem {
-    // TODO
+    int todo;
 } typedef my_sem_t;
 
 int my_sem_init(my_sem_t *sem, int pshared, unsigned int value);

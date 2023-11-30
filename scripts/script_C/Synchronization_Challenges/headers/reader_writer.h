@@ -13,11 +13,11 @@
 
 #ifdef POSIX
 pthread_mutex_t writer_mutex, reader_mutex, general_mutex;
+sem_t db_writer, db_reader;
 #else
 my_mutex_t writer_mutex, reader_mutex, general_mutex;
+my_sem_t db_writer, db_reader;
 #endif
-
-sem_t db_writer, db_reader;
 
 int readsDone, writesDone = 0;
 int readersCount, writersCount = 0;
@@ -32,7 +32,7 @@ void *reader(void *unused);
 
 void *writer(void *unused);
 
-int destroy_sem();
+int destroy_sems();
 
 int destroy_all();
 
