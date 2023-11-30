@@ -1,6 +1,9 @@
 #include "../headers/philosopher.h"
-#include "../../mutex/mutex.h"
 
+/*
+gcc -DTTS_MUTEX scripts/script_C/active_locks_implementation/src/mutex_tts.c script
+s/script_C/mutex/mutex.c scripts/script_C/Synchronization_Challenges/src/philosopher.c -o PHILOSOPHERRRR.out
+*/
 void *create_arg_philosopher(int id, bool rightGreater, void *left_baguette, void *right_baguette)
 {
     args_philosopher_t *args_philosopher = malloc(sizeof(args_philosopher_t));
@@ -19,13 +22,16 @@ void *create_arg_philosopher(int id, bool rightGreater, void *left_baguette, voi
 
 void philosopher_eating(int id, bool rightGreater, void *left_baguette, void *right_baguette)
 {
+    //printf("Lock\n");
     if (rightGreater)
     {
+        //printf("ok1\n");
         lock(left_baguette);
         lock(right_baguette);
     }
     else
     {
+        //printf("ok2\n");
         lock(right_baguette);
         lock(left_baguette);
     }
@@ -34,6 +40,8 @@ void philosopher_eating(int id, bool rightGreater, void *left_baguette, void *ri
 
     unlock(left_baguette);
     unlock(right_baguette);
+
+    //printf("Unlock\n");
 }
 
 
@@ -59,6 +67,8 @@ void *philosopher_function(void* arg)
 
         // Philosopher eats
         philosopher_eating(id, rightGreater, left_baguette, right_baguette);
+
+        //printf("%d\n", i);
     }
 
     free(arg_philosopher);
@@ -69,7 +79,6 @@ void *philosopher_function(void* arg)
 
 int main(int argc, char *argv[])
 {
-
     if (argc != 2)
     {
         perror("argc != 2");
@@ -85,11 +94,16 @@ int main(int argc, char *argv[])
     }
 
     pthread_t philosophers[NB_PHILOSOPHERS];
-    void *baguettes[NB_PHILOSOPHERS];
+
+    #ifdef POSIX
+    pthread_mutex_t baguettes[NB_PHILOSOPHERS];
+    #else
+    my_mutex_t *baguettes[NB_PHILOSOPHERS];
+    #endif
 
     for (int i = 0; i < NB_PHILOSOPHERS; i++)
     {
-        if (init(baguettes[i]) != 0)
+        if (init(&baguettes[i]) != 0)
         {
             perror("init()");
             return EXIT_FAILURE;
@@ -126,6 +140,8 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
     }
+
+    printf("WOW\n");
 
     int error = 0;
     for (int i = 0; i < NB_PHILOSOPHERS; i++)

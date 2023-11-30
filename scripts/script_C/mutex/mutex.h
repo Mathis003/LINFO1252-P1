@@ -6,6 +6,7 @@
 #elif TTS_MUTEX
 #include "../active_locks_implementation/headers/my_mutex_tts.h"
 #else
+#include <stddef.h>
 #include <semaphore.h>
 #endif
 
