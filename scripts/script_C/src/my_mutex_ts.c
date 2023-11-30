@@ -4,10 +4,11 @@
 
 // lock: ; étiquette, variable
 //     .long 0 ; initialisée à 0
-volatile long lock = 0;
+
+
 int my_mutex_init(my_mutex_t *my_mutex)
 {
-    // TODO
+    my_mutex->lock = 0;
     return 0;
 }
 
@@ -26,9 +27,15 @@ int my_mutex_destroy(my_mutex_t *my_mutex)
 //     testl %eax, %eax    ; met le flag ZF à vrai si %eax contient 0
 //     jnz enter ; retour à enter: si ZF n'est pas vrai
 //     ret
+
 int my_mutex_lock(my_mutex_t *my_mutex)
 {
-    /*
+    if (my_mutex == NULL) {
+        return -1;
+    }
+
+    printf("my_mutex_lock: %d\n", my_mutex->lock);
+    
     long eax;
     asm volatile(
         "1: \n\t"
@@ -37,30 +44,34 @@ int my_mutex_lock(my_mutex_t *my_mutex)
                                     
         "testl %%eax, %%eax \n\t"
         "jnz 1b"
-        : "+m" (lock), "=a" (eax)
+        : "+m" (my_mutex->lock), "=a" (eax)
         :
         : "cc"
     );
-    return eax;
-    */
-   return 0;
+    // printf("my_mutex_lock exit: %d\n", my_mutex->lock);
+    
+    return 0;
+    
 }
 
-// leave:
-//     movl $0, %eax       ; %eax=0
-//     xchgl %eax, (lock)  ; instruction atomique
-//     ret
 int my_mutex_unlock(my_mutex_t *my_mutex)
 {
-    /*
+    if (my_mutex == NULL) {
+        return -1;
+    }
+    printf("my_mutex_unlock: %d\n", my_mutex->lock);
+    
+    
     long eax;
     asm volatile(
         "movl $0, %%eax \n\t"
         "xchgl %%eax, %0"
                         
-        : "+m" (lock), "=a" (eax)
+        : "+m" (my_mutex->lock), "=a" (eax)
     );
-    return eax;
-    */
-   return 0;
+
+    // printf("my_mutex_unlock exit: %d\n", my_mutex->lock);
+    
+    return 0;
+    
 }
