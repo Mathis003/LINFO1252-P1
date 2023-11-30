@@ -11,12 +11,14 @@ CSV_DIR=csv_files
 GRAPHS_DIR=graphs
 BIN_DIR=bin
 
-DEPENDENCIES_PROGRAMS_TS_NAME=mutex my_mutex_ts my_sem
-DEPENDENCIES_PROGRAMS_TS=$(addsuffix .c, $(addprefix $(C_DIR)/, $(DEPENDENCIES_PROGRAMS_TS_NAME)))
-DEPENDENCIES_PROGRAMS_TTS_NAME=mutex my_mutex_tts my_sem
-DEPENDENCIES_PROGRAMS_TTS=$(addsuffix .c, $(addprefix $(C_DIR)/, $(DEPENDENCIES_PROGRAMS_TS_NAME)))
 DEPENDENCIES_PROGRAMS_POSIX_NAME=mutex
-DEPENDENCIES_PROGRAMS_POSIX=$(addsuffix .c, $(addprefix $(C_DIR)/, $(DEPENDENCIES_PROGRAMS_TS_NAME)))
+DEPENDENCIES_PROGRAMS_POSIX=$(addsuffix .c, $(addprefix $(C_DIR)/, $(DEPENDENCIES_PROGRAMS_POSIX_NAME)))
+
+DEPENDENCIES_PROGRAMS_TS_NAME=my_mutex_ts my_sem mutex
+DEPENDENCIES_PROGRAMS_TS=$(addsuffix .c, $(addprefix $(C_DIR)/, $(DEPENDENCIES_PROGRAMS_TS_NAME)))
+
+DEPENDENCIES_PROGRAMS_TTS_NAME=my_mutex_tts my_sem mutex
+DEPENDENCIES_PROGRAMS_TTS=$(addsuffix .c, $(addprefix $(C_DIR)/, $(DEPENDENCIES_PROGRAMS_TTS_NAME)))
 
 NB_THREADS?=1
 
@@ -45,8 +47,10 @@ build_reader_writer: build_reader_writer_POSIX build_reader_writer_TS build_read
 
 build_reader_writer_POSIX: $(C_DIR)/reader_writer.c $(DEPENDENCIES_PROGRAMS_POSIX) | $(BIN_DIR)
 	@$(CC) -D POSIX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/reader_writer_POSIX.bin $^
+
 build_reader_writer_TS: $(C_DIR)/reader_writer.c $(DEPENDENCIES_PROGRAMS_TS) | $(BIN_DIR)
 	@$(CC) -D TS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/reader_writer_TS.bin $^
+
 build_reader_writer_TTS: $(C_DIR)/reader_writer.c $(DEPENDENCIES_PROGRAMS_TTS) | $(BIN_DIR)
 	@$(CC) -D TTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/reader_writer_TTS.bin $^
 
@@ -55,8 +59,10 @@ build_producer_consumer: build_producer_consumer_POSIX build_producer_consumer_T
 
 build_producer_consumer_POSIX: $(C_DIR)/producer_consumer.c $(DEPENDENCIES_PROGRAMS_POSIX) | $(BIN_DIR)
 	@$(CC) -D POSIX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/producer_consumer_POSIX.bin $^
+
 build_producer_consumer_TS: $(C_DIR)/producer_consumer.c $(DEPENDENCIES_PROGRAMS_TS) | $(BIN_DIR)
 	@$(CC) -D TS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/producer_consumer_TS.bin $^
+
 build_producer_consumer_TTS: $(C_DIR)/producer_consumer.c $(DEPENDENCIES_PROGRAMS_TTS) | $(BIN_DIR)
 	@$(CC) -D TTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/producer_consumer_TTS.bin $^
 
@@ -68,8 +74,6 @@ build_main_my_mutex_TS: $(C_DIR)/main_my_mutex.c $(DEPENDENCIES_PROGRAMS_TS) | $
 
 build_main_my_mutex_TTS: $(C_DIR)/main_my_mutex.c $(DEPENDENCIES_PROGRAMS_TTS) | $(BIN_DIR)
 	@$(CC) -D TTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/main_my_mutex_TTS.bin $^
-
-
 
 
 

@@ -23,17 +23,17 @@ void *reader(void *unused)
 {
     while (1)
     {
-        lock(&general_mutex);
+        lock_mutex(&general_mutex);
 
-        sem_wait(&db_reader);
+        wait_sem(&db_reader);
 
-        lock(&reader_mutex);
+        lock_mutex(&reader_mutex);
 
         if (readsDone == NB_READS)
         {
-            unlock(&general_mutex);
-            sem_post(&db_reader);
-            unlock(&reader_mutex);
+            unlock_mutex(&general_mutex);
+            post_sem(&db_reader);
+            unlock_mutex(&reader_mutex);
             break;
         }
         
@@ -42,26 +42,26 @@ void *reader(void *unused)
         readersCount++;
         if (readersCount == 1)
         {
-            sem_wait(&db_writer);
+            wait_sem(&db_writer);
         }
         
-        unlock(&reader_mutex);
+        unlock_mutex(&reader_mutex);
 
-        sem_post(&db_reader);
+        post_sem(&db_reader);
 
-        unlock(&general_mutex);
+        unlock_mutex(&general_mutex);
 
         read_database();
 
-        lock(&reader_mutex);
+        lock_mutex(&reader_mutex);
 
         readersCount--;
         if (readersCount == 0)
         {
-            sem_post(&db_writer);
+            post_sem(&db_writer);
         }
 
-        unlock(&reader_mutex);
+        unlock_mutex(&reader_mutex);
     }
     return NULL;
 }
@@ -70,39 +70,39 @@ void *writer(void *unused)
 {
     while (1)
     {
-        sem_wait(&db_reader);
-        sem_wait(&db_writer);
+        wait_sem(&db_reader);
+        wait_sem(&db_writer);
 
         if (writesDone == NB_WRITES)
         {
-            sem_post(&db_writer);
-            sem_post(&db_reader);
+            post_sem(&db_writer);
+            post_sem(&db_reader);
             break;
         }
 
         write_database();
         writesDone++;
 
-        sem_post(&db_writer);
-        sem_post(&db_reader);
+        post_sem(&db_writer);
+        post_sem(&db_reader);
     }
     return NULL;
 }
 
-int destroy_sem()
+int destroy_sems()
 {
     int value = 1;
-    if (sem_destroy(&db_writer) != 0) value = 0;
-    if (sem_destroy(&db_reader) != 0) value = 0;
+    if (destroy_sem(&db_writer) != 0) value = 0;
+    if (destroy_sem(&db_reader) != 0) value = 0;
     return value;
 }
 
 int destroy_all()
 {
-    int value = destroy_sem();
-    if (destroy(&writer_mutex) != 0) value = 0;
-    if (destroy(&reader_mutex) != 0) value = 0;
-    if (destroy(&general_mutex) != 0) value = 0;
+    int value = destroy_sems();
+    if (destroy_mutex(&writer_mutex) != 0) value = 0;
+    if (destroy_mutex(&reader_mutex) != 0) value = 0;
+    if (destroy_mutex(&general_mutex) != 0) value = 0;
     return value;
 }
 
@@ -124,37 +124,37 @@ int main(int argc, char *argv[])
     }
 
     int error = 0;
-    error += sem_init(&db_writer, 0, 1);
-    error += sem_init(&db_reader, 0, 1);
+    error += init_sem(&db_writer, 0, 1);
+    error += init_sem(&db_reader, 0, 1);
     if (error != 0)
     {
-        perror("sem_init()");
-        destroy_sem();
+        perror("init_sem()");
+        destroy_sems();
         return EXIT_FAILURE;
     }
 
 
-    if (init(&writer_mutex) != 0)
+    if (init_mutex(&writer_mutex) != 0)
     {
-        perror("init()");
-        destroy_sem();
+        perror("init_mutex()");
+        destroy_sems();
         return EXIT_FAILURE;
     }
 
-    if (init(&reader_mutex) != 0)
+    if (init_mutex(&reader_mutex) != 0)
     {
-        perror("init()");
-        destroy(&writer_mutex);
-        destroy_sem();
+        perror("init_mutex()");
+        destroy_mutex(&writer_mutex);
+        destroy_sems();
         return EXIT_FAILURE;
     }
 
-    if (init(&general_mutex) != 0)
+    if (init_mutex(&general_mutex) != 0)
     {
-        perror("init()");
-        destroy_sem();
-        destroy(&writer_mutex);
-        destroy(&reader_mutex);
+        perror("init_mutex()");
+        destroy_sems();
+        destroy_mutex(&writer_mutex);
+        destroy_mutex(&reader_mutex);
         return EXIT_FAILURE;
     }
 

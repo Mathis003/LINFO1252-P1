@@ -24,13 +24,13 @@ void *producer(void *unused)
         int item = produce();
         // printf("Produced : %d\n", item);
 
-        sem_wait(&empty);
-        lock(&mutex);
+        wait_sem(&empty);
+        lock_mutex(&mutex);
 
         if (nbProductionsDone == NB_PRODUCTIONS)
         {
-            sem_post(&full);
-            unlock(&mutex);
+            post_sem(&full);
+            unlock_mutex(&mutex);
             break;
         }
 
@@ -39,8 +39,8 @@ void *producer(void *unused)
         nbProductionsDone++;
         // printf("nbProductionsDone : %d\n", nbProductionsDone);
 
-        sem_post(&full);
-        unlock(&mutex);
+        post_sem(&full);
+        unlock_mutex(&mutex);
 
         process();
     }
@@ -60,13 +60,13 @@ void *consumer(void *unused)
     // int item;
     while (1)
     {
-        sem_wait(&full);
-        lock(&mutex);
+        wait_sem(&full);
+        lock_mutex(&mutex);
 
         if (nbConsumeDone == NB_PRODUCTIONS)
         {
-            sem_post(&empty);
-            unlock(&mutex);
+            post_sem(&empty);
+            unlock_mutex(&mutex);
             break;
         }
         
@@ -77,8 +77,8 @@ void *consumer(void *unused)
         nbConsumeDone++;
         // printf("nbConsumeDone : %d\n", nbConsumeDone);
 
-        sem_post(&empty);
-        unlock(&mutex);
+        post_sem(&empty);
+        unlock_mutex(&mutex);
 
         process();
     }
@@ -87,9 +87,9 @@ void *consumer(void *unused)
 
 void destroy_all(void)
 {
-    sem_destroy(&empty);
-    sem_destroy(&full);
-    destroy(&mutex);
+    destroy_sem(&empty);
+    destroy_sem(&full);
+    destroy_mutex(&mutex);
 }
 
 int main(int argc, char *argv[])
@@ -109,27 +109,27 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    if (init(&mutex) != 0)
+    if (init_mutex(&mutex) != 0)
     {
-        perror("init()");
+        perror("init_mutex()");
         return EXIT_FAILURE;
     }
 
     pthread_t producers[nbProducers];
     pthread_t consumers[nbConsumers];
 
-    if (sem_init(&empty, 0, CAPACITY_BUFFER) != 0)
+    if (init_sem(&empty, 0, CAPACITY_BUFFER) != 0)
     {
-        perror("sem_init()");
-        destroy(&mutex);
+        perror("init_sem()");
+        destroy_mutex(&mutex);
         return EXIT_FAILURE;
     }
 
-    if (sem_init(&full, 0, 0) !=  0)
+    if (init_sem(&full, 0, 0) !=  0)
     {
-        perror("sem_init()");
-        sem_destroy(&empty);
-        destroy(&mutex);
+        perror("init_sem()");
+        destroy_sem(&empty);
+        destroy_mutex(&mutex);
         return EXIT_FAILURE;
     }
 
@@ -173,24 +173,24 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (destroy(&mutex) != 0)
+    if (destroy_mutex(&mutex) != 0)
     {
-        perror("destroy()");
-        sem_destroy(&empty);
-        sem_destroy(&full);
+        perror("destroy_sem()");
+        destroy_sem(&empty);
+        destroy_sem(&full);
         return EXIT_FAILURE;
     }
 
-    if (sem_destroy(&empty) != 0)
+    if (destroy_sem(&empty) != 0)
     {
-        perror("sem_destroy()");
-        sem_destroy(&full);
+        perror("destroy_sem()");
+        destroy_sem(&full);
         return EXIT_FAILURE;
     }
 
-    if (sem_destroy(&full) != 0)
+    if (destroy_sem(&full) != 0)
     {
-        perror("sem_destroy()");
+        perror("destroy_sem()");
         return EXIT_FAILURE;
     }
 
