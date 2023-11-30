@@ -1,5 +1,27 @@
 #include "../headers/main_mutex.h"
 
+#define TS_MUTEX
+
+#ifdef TS_MUTEX
+    #include "../headers/test_and_set.h"
+    #define init_mutex my_mutex_ts_init
+    #define destroy_mutex my_mutex_ts_destroy
+    #define lock_mutex my_mutex_ts_lock
+    #define unlock_mutex my_mutex_ts_unlock
+#else
+    #include "../headers/test_and_test_and_set.h"
+    #define init_mutex my_mutex_tts_init
+    #define destroy_mutex my_mutex_tts_destroy
+    #define lock_mutex my_mutex_tts_lock
+    #define unlock_mutex my_mutex_tts_unlock
+#endif
+
+
+void init_mutex();
+void destroy_mutex();
+void lock_mutex();
+void unlock_mutex();
+
 int NBER_ITER;
 
 void process(void)
@@ -11,9 +33,9 @@ void *thread_function(void *arg)
 {
     for (int i = 0; i < NBER_ITER; i++)
     {
-        my_tts_lock();
+        lock_mutex();
         process();
-        my_tts_unlock();
+        unlock_mutex();
     }
     return NULL;
 }
@@ -37,7 +59,7 @@ int main(int argc, char *argv[])
 
     NBER_ITER = 6400 / NB_THREADS;
 
-    if (my_tts_init() != 0)
+    if (init_mutex() != 0)
     {
         perror("my_tts_init()");
         return EXIT_FAILURE;
@@ -61,7 +83,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (my_tts_destroy() != 0)
+    if (destroy_mutex() != 0)
     {
         perror("my_tts_destroy()");
         return EXIT_FAILURE;

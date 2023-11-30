@@ -1,25 +1,21 @@
-#include "../headers/test_and_set.h"
-// mutex_ts
-
+#include "../headers/my_mutex_ts.h"
 
 //! pour compiler: gcc main_mutex_ts.c -o main_mutex_ts -lpthread
 
 // lock: ; étiquette, variable
 //     .long 0 ; initialisée à 0
 volatile long lock = 0;
-int my_ts_mutex_init()
+int my_mutex_init(my_mutex_t *my_mutex)
 {
     // TODO
     return 0;
 }
 
-int my_ts_mutex_destroy()
+int my_mutex_destroy(my_mutex_t *my_mutex)
 {
     // TODO
     return 0;
 }
-
-
 
 
 
@@ -31,7 +27,7 @@ int my_ts_mutex_destroy()
 //     testl %eax, %eax    ; met le flag ZF à vrai si %eax contient 0
 //     jnz enter ; retour à enter: si ZF n'est pas vrai
 //     ret
-int my_ts_mutex_lock()
+int my_mutex_lock(my_mutex_t *my_mutex)
 {
     long eax;
     asm volatile(
@@ -52,7 +48,7 @@ int my_ts_mutex_lock()
 //     movl $0, %eax       ; %eax=0
 //     xchgl %eax, (lock)  ; instruction atomique
 //     ret
-int my_ts_mutex_unlock()
+int my_mutex_unlock(my_mutex_t *my_mutex)
 {
     long eax;
     asm volatile(

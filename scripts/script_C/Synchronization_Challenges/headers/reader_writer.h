@@ -1,13 +1,12 @@
+#ifndef READER_WRITER_H
+#define READER_WRITER_H
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <pthread.h>
-#include <stdbool.h>
 #include <stdint.h>
-#include <semaphore.h>
+#include <pthread.h>
 
-#include "../../active_locks_implementation/headers/test_and_set.h"
-#include "../../active_locks_implementation/headers/test_and_test_and_set.h"
-#include "../../active_locks_implementation/headers/sem.h"
+#include "../../mutex/mutex.h"
 
 #define NB_READS 2560
 #define NB_WRITES 640
@@ -33,3 +32,5 @@ int destroy_sem();
 int destroy_all();
 
 int main(int argc, char *argv[]);
+
+#endif // READER_WRITER_H

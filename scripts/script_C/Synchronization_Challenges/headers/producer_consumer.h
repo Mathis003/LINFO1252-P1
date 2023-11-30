@@ -1,7 +1,9 @@
+#ifndef PRODUCER_CONSUMER_H
+#define PRODUCER_CONSUMER_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include <stdbool.h>
 #include <stdint.h>
 #include <semaphore.h>
 
@@ -33,3 +35,5 @@ void *consumer(void *unused);
 void destroy_all(void);
 
 int main(int argc, char *argv[]);
+
+#endif // PRODUCER_CONSUMER_H
