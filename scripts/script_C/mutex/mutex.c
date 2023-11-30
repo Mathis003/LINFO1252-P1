@@ -2,42 +2,44 @@
 
 int init(void *mutex)
 {
+    int result;
     #ifdef POSIX
-    printf("Perfect.\n");
-    int err = pthread_mutex_init((pthread_mutex_t *) mutex, NULL);
+    result = pthread_mutex_init((pthread_mutex_t *) mutex, NULL);
     #else
-    printf("Bad.\n");
-    err = my_mutex_init((my_mutex_t *) mutex);
+    result = my_mutex_init((my_mutex_t *) mutex);
     #endif
-    return err;
+    return result;
 }
 
 int destroy(void *mutex)
 {
+    int result;
     #ifdef POSIX
-    int err = pthread_mutex_destroy((pthread_mutex_t *) mutex);
+    result = pthread_mutex_destroy((pthread_mutex_t *) mutex);
     #else
-    err = my_mutex_destroy((my_mutex_t *) mutex);
+    result = my_mutex_destroy((my_mutex_t *) mutex);
     #endif
-    return err;
+    return result;
 }
 
 int lock(void *mutex)
 {
+    int result;
     #ifdef POSIX
-    int err = pthread_mutex_lock((pthread_mutex_t *) mutex);
+    result = pthread_mutex_lock((pthread_mutex_t *) mutex);
     #else
-    err = my_mutex_lock((my_mutex_t *) mutex);
+    result = my_mutex_lock((my_mutex_t *) mutex);
     #endif
-    return err;
+    return result;
 }
 
 int unlock(void *mutex)
 {
+    int result;
     #ifdef POSIX
-    int err = pthread_mutex_unlock((pthread_mutex_t *) mutex);
+    result = pthread_mutex_unlock((pthread_mutex_t *) mutex);
     #else
-    err = my_mutex_unlock((my_mutex_t *) mutex);
+    result = my_mutex_unlock((my_mutex_t *) mutex);
     #endif
-    return err;
+    return result;
 }

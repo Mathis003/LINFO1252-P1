@@ -2,7 +2,8 @@
     "files.associations": {
         "stdlib.h": "c",
         "stdio.h": "c",
-        "my_mutex_ts.h": "c"
+        "my_mutex_ts.h": "c",
+        "functional": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
