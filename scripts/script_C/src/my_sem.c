@@ -13,24 +13,26 @@ int my_sem_init(my_sem_t *sem, unsigned int value)
     return EXIT_SUCCESS;
 }
 
-int my_sem_destroy(my_sem_t *sem)
+void my_sem_destroy(my_sem_t *sem)
 {
     my_mutex_destroy(sem->mutex);
     free(sem->mutex);
     sem = NULL;
-    return EXIT_SUCCESS;
 }
 
 int my_sem_wait(my_sem_t *sem)
 {
     while (1)
     {
-        lock_mutex(sem->mutex);
-        if (sem->value <= 0) unlock_mutex(sem->mutex);
+        if (lock_mutex(sem->mutex) != 0) return EXIT_FAILURE;
+        if (sem->value <= 0)
+        {
+            if (unlock_mutex(sem->mutex) != 0) return EXIT_FAILURE;
+        }
         else
         {
             (sem->value)--;
-            unlock_mutex(sem->mutex);
+            if (unlock_mutex(sem->mutex) != 0) return EXIT_FAILURE;
             break;
         }
     }
@@ -39,7 +41,8 @@ int my_sem_wait(my_sem_t *sem)
 
 int my_sem_post(my_sem_t *sem)
 {
-    lock_mutex(sem->mutex);
+    if (lock_mutex(sem->mutex) != 0) return EXIT_FAILURE;
     (sem->value)++;
-    unlock_mutex(sem->mutex);
+    if (unlock_mutex(sem->mutex) != 0) return EXIT_FAILURE;
+    return EXIT_SUCCESS;
 }

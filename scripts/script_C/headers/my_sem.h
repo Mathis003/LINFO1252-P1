@@ -16,7 +16,7 @@ typedef struct my_sem {
 
 int my_sem_init(my_sem_t *sem, unsigned int value);
 
-int my_sem_destroy(my_sem_t *sem);
+void my_sem_destroy(my_sem_t *sem);
 
 int my_sem_wait(my_sem_t *sem);
 

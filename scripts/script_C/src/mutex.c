@@ -8,7 +8,8 @@ int init_mutex(void *mutex)
     result = pthread_mutex_init(POSIX_mutex, NULL);
     #else
     my_mutex_t *my_mutex = (my_mutex_t *) mutex;
-    result = my_mutex_init(my_mutex);
+    result = 0;
+    my_mutex_init(my_mutex);
     #endif
     return result;
 }
@@ -21,7 +22,8 @@ int destroy_mutex(void *mutex)
     result = pthread_mutex_destroy(POSIX_mutex);
     #else
     my_mutex_t *my_mutex = (my_mutex_t *) mutex;
-    result = my_mutex_destroy(my_mutex);
+    result = 0;
+    my_mutex_destroy(my_mutex);
     #endif
     return result;
 }
@@ -98,7 +100,8 @@ int destroy_sem(void *sem)
     result = sem_destroy(POSIX_sem);
     #else
     my_sem_t *my_sem = (my_sem_t *) sem;
-    result = my_sem_destroy(my_sem);
+    result = 0;
+    my_sem_destroy(my_sem);
     #endif
     return result;
 }
