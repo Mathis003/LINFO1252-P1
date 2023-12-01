@@ -181,6 +181,9 @@ int main(int argc, char *argv[])
         }
     }
 
+    
+    printf("Waiting for threads to finish...\n");
+
     for (int i = 0; i < nbWriters; i++)
     {
         if (pthread_join(writers[i], NULL) != 0)
@@ -191,6 +194,9 @@ int main(int argc, char *argv[])
         }
     }
 
+
+
+
     for (int i = 0; i < nbReaders; i++)
     {
         if (pthread_join(readers[i], NULL) != 0)
@@ -200,6 +206,9 @@ int main(int argc, char *argv[])
             return EXIT_FAILURE;
         }
     }
+
+    printf("readsdone: %d, writesdone: %d\n", readsDone, writesDone);
+
 
     if (destroy_all() == 0) return EXIT_FAILURE;
     return EXIT_SUCCESS;
