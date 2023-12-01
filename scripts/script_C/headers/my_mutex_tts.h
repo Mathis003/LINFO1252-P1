@@ -3,9 +3,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdatomic.h>
 
 typedef struct my_mutex {
-    int todo;
+    volatile int lock;
 } my_mutex_t;
 
 int my_mutex_init(my_mutex_t *my_mutex);

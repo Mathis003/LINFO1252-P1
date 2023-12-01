@@ -11,6 +11,9 @@
 #elif TTS_MUTEX
 #include "my_mutex_tts.h"
 #include "my_sem.h"
+#elif BTTS_MUTEX
+#include "my_mutex_btts.h"
+#include "my_sem.h"
 #else
 #include <stddef.h>
 #include <semaphore.h>

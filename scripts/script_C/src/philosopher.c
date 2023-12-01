@@ -131,8 +131,6 @@ int main(int argc, char *argv[])
         }
     }
 
-    printf("WOW\n");
-
     int error = 0;
     for (int i = 0; i < NB_PHILOSOPHERS; i++)
     {

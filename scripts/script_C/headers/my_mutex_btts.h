@@ -1,5 +1,5 @@
-#ifndef MY_MUTEX_TS_H
-#define MY_MUTEX_TS_H
+#ifndef MY_MUTEX_BTSS_H
+#define MY_MUTEX_BTSS_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,4 +17,4 @@ int my_mutex_lock(my_mutex_t *my_mutex);
 
 int my_mutex_unlock(my_mutex_t *my_mutex);
 
-#endif // MY_MUTEX_TS_H
+#endif // MY_MUTEX_BTSS_H
