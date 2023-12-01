@@ -1,4 +1,5 @@
 #include "../headers/my_mutex_ts.h"
+#include <stdatomic.h>
 
 //! pour compiler: gcc main_mutex_ts.c -o main_mutex_ts -lpthread
 
@@ -6,19 +7,29 @@
 //     .long 0 ; initialisée à 0
 
 
-int my_mutex_init(my_mutex_t *my_mutex)
+int my_mutex_init(my_mutex_t **my_mutex)
 {
-    my_mutex->lock = 0;
+    *my_mutex = malloc(sizeof(my_mutex_t));
+    
+    if (*my_mutex == NULL) {
+        return -1;
+    }
+
+    (*my_mutex)->lock = 0;
+    
     return 0;
 }
+
 
 int my_mutex_destroy(my_mutex_t *my_mutex)
 {
+    
     // TODO
+    // free(my_mutex);
     return 0;
 }
 
-
+int counter = 0;
 // enter:
 //     movl $1, %eax ; %eax=1
 //     xchgl %eax, (lock)  ; instruction atomique, échange (lock) et %eax
@@ -30,13 +41,8 @@ int my_mutex_destroy(my_mutex_t *my_mutex)
 
 int my_mutex_lock(my_mutex_t *my_mutex)
 {
-    if (my_mutex == NULL) {
-        return -1;
-    }
+    int eax;
 
-    printf("my_mutex_lock: %d\n", my_mutex->lock);
-    
-    long eax;
     asm volatile(
         "1: \n\t"
         "movl $1, %%eax \n\t"
@@ -48,21 +54,12 @@ int my_mutex_lock(my_mutex_t *my_mutex)
         :
         : "cc"
     );
-    // printf("my_mutex_lock exit: %d\n", my_mutex->lock);
-    
-    return 0;
-    
+    return eax;
 }
 
 int my_mutex_unlock(my_mutex_t *my_mutex)
 {
-    if (my_mutex == NULL) {
-        return -1;
-    }
-    printf("my_mutex_unlock: %d\n", my_mutex->lock);
-    
-    
-    long eax;
+    int eax;
     asm volatile(
         "movl $0, %%eax \n\t"
         "xchgl %%eax, %0"
@@ -70,8 +67,7 @@ int my_mutex_unlock(my_mutex_t *my_mutex)
         : "+m" (my_mutex->lock), "=a" (eax)
     );
 
-    // printf("my_mutex_unlock exit: %d\n", my_mutex->lock);
-    
-    return 0;
-    
+    return eax;
 }
+
+

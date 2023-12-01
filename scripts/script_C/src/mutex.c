@@ -7,7 +7,7 @@ int init_mutex(void *mutex)
     pthread_mutex_t *POSIX_mutex = (pthread_mutex_t *) mutex;
     result = pthread_mutex_init(POSIX_mutex, NULL);
     #else
-    my_mutex_t *my_mutex = (my_mutex_t *) mutex;
+    my_mutex_t **my_mutex = (my_mutex_t **) &mutex;
     result = my_mutex_init(my_mutex);
     #endif
     return result;
@@ -46,14 +46,15 @@ int unlock_mutex(void *mutex)
     pthread_mutex_t *POSIX_mutex = (pthread_mutex_t *) mutex;
     result = pthread_mutex_unlock(POSIX_mutex);
     #else
-    my_mutex_t *my_mutex = (my_mutex_t *) mutex;
-    result = my_mutex_unlock(my_mutex);
+
+    result = my_mutex_unlock(mutex);
     #endif
     return result;
 }
 
 int init_sem(void *sem, int pshared, unsigned int value)
 {
+    return init_mutex(sem);
     int result;
     #ifdef POSIX
     sem_t *POSIX_sem = (sem_t *) sem;
@@ -67,7 +68,10 @@ int init_sem(void *sem, int pshared, unsigned int value)
 
 int wait_sem(void *sem)
 {
+    return lock_mutex(sem);
     int result;
+
+
     #ifdef POSIX
     sem_t *POSIX_sem = (sem_t *) sem;
     result = sem_wait(POSIX_sem);
@@ -80,7 +84,10 @@ int wait_sem(void *sem)
 
 int post_sem(void *sem)
 {
+    return unlock_mutex(sem);
     int result;
+
+
     #ifdef POSIX
     sem_t *POSIX_sem = (sem_t *) sem;
     result = sem_post(POSIX_sem);
@@ -93,6 +100,9 @@ int post_sem(void *sem)
 
 int destroy_sem(void *sem)
 {
+    return destroy_mutex(sem);
+
+
     int result;
     #ifdef POSIX
     sem_t *POSIX_sem = (sem_t *) sem;
