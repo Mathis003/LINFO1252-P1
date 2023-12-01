@@ -37,7 +37,7 @@ void *producer(void *unused)
         insert_item(item);
 
         nbProductionsDone++;
-        // printf("nbProductionsDone : %d\n", nbProductionsDone);
+        printf("nbProductionsDone : %d\n", nbProductionsDone);
 
         post_sem(&full);
         unlock_mutex(&mutex);
@@ -75,7 +75,7 @@ void *consumer(void *unused)
         // printf("Consumed : %d\n", item);
 
         nbConsumeDone++;
-        // printf("nbConsumeDone : %d\n", nbConsumeDone);
+        printf("nbConsumeDone : %d\n", nbConsumeDone);
 
         post_sem(&empty);
         unlock_mutex(&mutex);
