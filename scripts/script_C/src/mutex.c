@@ -61,7 +61,7 @@ int init_sem(void *sem, int pshared, unsigned int value)
     result = sem_init(POSIX_sem, pshared, value);
     #else
     my_sem_t *my_sem = (my_sem_t *) sem;
-    result = my_sem_init(my_sem, pshared, value);
+    result = my_sem_init(my_sem, value);
     #endif
     return result;
 }

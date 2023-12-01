@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdatomic.h>
 
 typedef struct {
     volatile int lock;

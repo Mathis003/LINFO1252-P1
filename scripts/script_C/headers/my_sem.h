@@ -4,11 +4,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "my_mutex_ts.h"
+
 typedef struct my_sem {
-    int todo;
+    int value;
+    my_mutex_t *mutex;
 } my_sem_t;
 
-int my_sem_init(my_sem_t *sem, int pshared, unsigned int value);
+int my_sem_init(my_sem_t *sem, unsigned int value);
 
 int my_sem_destroy(my_sem_t *sem);
 

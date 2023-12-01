@@ -1,32 +1,26 @@
 #include "../headers/my_mutex_ts.h"
-#include <stdatomic.h>
-
-//! pour compiler: gcc main_mutex_ts.c -o main_mutex_ts -lpthread
-
-// lock: ; étiquette, variable
-//     .long 0 ; initialisée à 0
 
 
 int my_mutex_init(my_mutex_t **my_mutex)
 {
-    *my_mutex = malloc(sizeof(my_mutex_t));
-    
-    if (*my_mutex == NULL) {
-        return -1;
+    *my_mutex = (my_mutex_t *) malloc(sizeof(my_mutex_t));
+    if (my_mutex == NULL)
+    {
+        perror("malloc()");
+        return EXIT_FAILURE;
     }
 
     (*my_mutex)->lock = 0;
-    
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 
 int my_mutex_destroy(my_mutex_t *my_mutex)
 {
-    
-    // TODO
-    // free(my_mutex);
-    return 0;
+    my_mutex->lock = 0;
+    free(my_mutex);
+    my_mutex = NULL;
+    return EXIT_SUCCESS;
 }
 
 int counter = 0;
@@ -42,7 +36,6 @@ int counter = 0;
 int my_mutex_lock(my_mutex_t *my_mutex)
 {
     int eax;
-
     asm volatile(
         "1: \n\t"
         "movl $1, %%eax \n\t"
@@ -66,8 +59,5 @@ int my_mutex_unlock(my_mutex_t *my_mutex)
                         
         : "+m" (my_mutex->lock), "=a" (eax)
     );
-
     return eax;
 }
-
-

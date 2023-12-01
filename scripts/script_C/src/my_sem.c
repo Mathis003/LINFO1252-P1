@@ -1,23 +1,43 @@
 #include "../headers/my_sem.h"
 
-int my_sem_init(my_sem_t *sem, int pshared, unsigned int value)
+
+int my_sem_init(my_sem_t *sem, unsigned int value)
 {
-    // TODO
-    return 0;
+    sem = (my_sem_t *) malloc(sizeof(my_sem_t));
+    if (sem == NULL)
+    {
+        perror("malloc()");
+        return EXIT_FAILURE;
+    }
+    sem->mutex = (my_mutex_t *) malloc(sizeof(my_mutex_t));
+    if (sem->mutex == NULL)
+    {
+        perror("malloc()");
+        return EXIT_FAILURE;
+    }
+    sem->mutex->lock = 0;
+    sem->value = value;
+    return EXIT_SUCCESS;
 }
 
 int my_sem_destroy(my_sem_t *sem)
 {
-    // TODO
-    return 0;
+    free(sem->mutex);
+    free(sem);
+    return EXIT_SUCCESS;
 }
 
 int my_sem_wait(my_sem_t *sem)
 {
-    return 0;
+    while (sem->value <= 0);
+    lock_mutex(sem->mutex->lock);
+    (sem->value)--;
+    unlock_mutex(sem->mutex->lock);
 }
 
 int my_sem_post(my_sem_t *sem)
 {
-    return 0;
+    lock_mutex(sem->mutex->lock);
+    (sem->value)++;
+    unlock_mutex(sem->mutex->lock);
 }
