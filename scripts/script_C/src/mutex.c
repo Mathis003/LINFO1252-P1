@@ -34,6 +34,10 @@ int lock_mutex(void *mutex)
     #ifdef POSIX
     pthread_mutex_t *POSIX_mutex = (pthread_mutex_t *) mutex;
     result = pthread_mutex_lock(POSIX_mutex);
+    #elif BTTS_MUTEX
+    my_mutex_t *my_mutex = (my_mutex_t *) mutex;
+    int time_usec = 1000;
+    result = my_mutex_lock(my_mutex, time_usec);
     #else
     my_mutex_t *my_mutex = (my_mutex_t *) mutex;
     result = my_mutex_lock(my_mutex);

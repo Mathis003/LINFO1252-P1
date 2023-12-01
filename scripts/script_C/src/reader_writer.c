@@ -91,18 +91,18 @@ void *writer(void *unused)
 
 int destroy_sems()
 {
-    int value = 1;
-    if (destroy_sem(&db_writer) != 0) value = 0;
-    if (destroy_sem(&db_reader) != 0) value = 0;
+    int value = 0;
+    if (destroy_sem(&db_writer) != 0) value = 1;
+    if (destroy_sem(&db_reader) != 0) value = 1;
     return value;
 }
 
 int destroy_all()
 {
     int value = destroy_sems();
-    if (destroy_mutex(&writer_mutex) != 0) value = 0;
-    if (destroy_mutex(&reader_mutex) != 0) value = 0;
-    if (destroy_mutex(&general_mutex) != 0) value = 0;
+    if (destroy_mutex(&writer_mutex) != 0) value = 1;
+    if (destroy_mutex(&reader_mutex) != 0) value = 1;
+    if (destroy_mutex(&general_mutex) != 0) value = 1;
     return value;
 }
 
@@ -132,7 +132,6 @@ int main(int argc, char *argv[])
         destroy_sems();
         return EXIT_FAILURE;
     }
-
 
     if (init_mutex(&writer_mutex) != 0)
     {
@@ -181,8 +180,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    
-    printf("Waiting for threads to finish...\n");
+    // printf("Waiting for threads to finish...\n");
 
     for (int i = 0; i < nbWriters; i++)
     {
@@ -194,9 +192,6 @@ int main(int argc, char *argv[])
         }
     }
 
-
-
-
     for (int i = 0; i < nbReaders; i++)
     {
         if (pthread_join(readers[i], NULL) != 0)
@@ -207,8 +202,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    printf("readsdone: %d, writesdone: %d\n", readsDone, writesDone);
-
+    // printf("readsdone: %d, writesdone: %d\n", readsDone, writesDone);
 
     if (destroy_all() == 0) return EXIT_FAILURE;
     return EXIT_SUCCESS;

@@ -15,7 +15,7 @@
 pthread_mutex_t writer_mutex, reader_mutex, general_mutex;
 sem_t db_writer, db_reader;
 #else
-my_mutex_t *writer_mutex, *reader_mutex, *general_mutex;
+my_mutex_t writer_mutex, reader_mutex, general_mutex;
 my_sem_t db_writer, db_reader;
 #endif
 
