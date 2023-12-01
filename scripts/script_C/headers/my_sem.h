@@ -1,9 +1,6 @@
 #ifndef MY_SEM_H
 #define MY_SEM_H
 
-#include <stdio.h>
-#include <stdlib.h>
-
 #ifdef TS_MUTEX
 #include "my_mutex_ts.h"
 #elif TTS_MUTEX

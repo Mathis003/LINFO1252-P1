@@ -9,9 +9,9 @@ void *thread_function(void *arg)
 {
     for (int i = 0; i < NBER_ITER; i++)
     {
-        lock_mutex();
+        lock_mutex(my_mutex);
         process();
-        unlock_mutex();
+        unlock_mutex(my_mutex);
     }
     return NULL;
 }
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 
     NBER_ITER = 6400 / NB_THREADS;
 
-    if (init_mutex() != 0)
+    if (init_mutex(&my_mutex) != 0)
     {
         perror("init_mutex()");
         return EXIT_FAILURE;
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    if (destroy_mutex() != 0)
+    if (destroy_mutex(my_mutex) != 0)
     {
         perror("destroy_mutex()");
         return EXIT_FAILURE;

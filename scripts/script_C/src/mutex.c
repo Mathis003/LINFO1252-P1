@@ -71,7 +71,6 @@ int wait_sem(void *sem)
     return lock_mutex(sem);
     int result;
 
-
     #ifdef POSIX
     sem_t *POSIX_sem = (sem_t *) sem;
     result = sem_wait(POSIX_sem);

@@ -6,6 +6,8 @@
 
 #include "mutex.h"
 
+my_mutex_t *my_mutex;
+
 int NBER_ITER;
 
 void process(void);
