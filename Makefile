@@ -27,6 +27,8 @@ HALF_THREADS=$(shell echo $$(( $(NB_THREADS) / 2 )))
 
 .PRECIOUS: $(BIN_DIR)/%.bin
 
+make: build_producer_consumer_TS
+	@bash experiments.sh
 
 all: csv plot
 
