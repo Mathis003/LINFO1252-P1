@@ -3,7 +3,9 @@
         "stdlib.h": "c",
         "stdio.h": "c",
         "my_mutex_ts.h": "c",
-        "functional": "c"
+        "functional": "c",
+        "stdint.h": "c",
+        "producer_consumer.h": "c"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

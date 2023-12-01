@@ -19,7 +19,7 @@ int idx_buffer = 0;
 pthread_mutex_t mutex;
 sem_t empty, full;
 #else
-my_mutex_t mutex;
+my_mutex_t* mutex;
 my_sem_t empty, full;
 #endif
 

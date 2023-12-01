@@ -7,7 +7,7 @@ int init_mutex(void *mutex)
     pthread_mutex_t *POSIX_mutex = (pthread_mutex_t *) mutex;
     result = pthread_mutex_init(POSIX_mutex, NULL);
     #else
-    my_mutex_t *my_mutex = (my_mutex_t *) mutex;
+    my_mutex_t **my_mutex = (my_mutex_t *) &mutex;
     result = my_mutex_init(my_mutex);
     #endif
     return result;
@@ -46,8 +46,8 @@ int unlock_mutex(void *mutex)
     pthread_mutex_t *POSIX_mutex = (pthread_mutex_t *) mutex;
     result = pthread_mutex_unlock(POSIX_mutex);
     #else
-    my_mutex_t *my_mutex = (my_mutex_t *) mutex;
-    result = my_mutex_unlock(my_mutex);
+
+    result = my_mutex_unlock(mutex);
     #endif
     return result;
 }
