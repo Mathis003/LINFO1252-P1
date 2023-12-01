@@ -4,7 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef TS_MUTEX
 #include "my_mutex_ts.h"
+#elif TTS_MUTEX
+#include "my_mutex_tts.h"
+#elif BTTS_MUTEX
+#include "my_mutex_btts.h"
+#endif
 
 typedef struct my_sem {
     int value;
