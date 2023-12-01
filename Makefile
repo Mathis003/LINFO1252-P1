@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -pthread
+CFLAGS=-g -pthread -fasm -masm=att
 LDFLAGS=-lpthread
 
 SRC_DIR=scripts
