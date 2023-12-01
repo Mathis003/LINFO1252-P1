@@ -49,17 +49,3 @@ int my_mutex_unlock(my_mutex_t *my_mutex)
     );
     return ret;
 }
-
-/*
-int my_mutex_lock(my_mutex_t *my_mutex)
-{
-    // TODO
-    return 0;
-}
-
-int my_mutex_unlock(my_mutex_t *my_mutex)
-{
-    // TODO
-    return 0;
-}
-*/
