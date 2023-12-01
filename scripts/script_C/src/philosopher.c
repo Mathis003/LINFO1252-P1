@@ -19,6 +19,8 @@ void *create_arg_philosopher(int id, bool rightGreater, void *left_baguette, voi
 
 void philosopher_eating(int id, bool rightGreater, void *left_baguette, void *right_baguette)
 {
+    printf("Philosopher [%d] is eating\n", id);
+    
     if (rightGreater)
     {
         lock_mutex(left_baguette);
@@ -88,7 +90,7 @@ int main(int argc, char *argv[])
     #ifdef POSIX
     pthread_mutex_t baguettes[NB_PHILOSOPHERS];
     #else
-    my_mutex_t *baguettes[NB_PHILOSOPHERS];
+    my_mutex_t baguettes[NB_PHILOSOPHERS];
     #endif
 
     for (int i = 0; i < NB_PHILOSOPHERS; i++)
@@ -98,6 +100,7 @@ int main(int argc, char *argv[])
             perror("init_mutex()");
             return EXIT_FAILURE;
         }
+        printf("baguette[%d] lock value: %d\n", i, baguettes[i].lock);
     }
 
     bool rightGreater;

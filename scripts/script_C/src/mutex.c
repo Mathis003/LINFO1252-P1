@@ -7,8 +7,9 @@ int init_mutex(void *mutex)
     pthread_mutex_t *POSIX_mutex = (pthread_mutex_t *) mutex;
     result = pthread_mutex_init(POSIX_mutex, NULL);
     #else
-    my_mutex_t **my_mutex = (my_mutex_t **) &mutex;
+    my_mutex_t *my_mutex = (my_mutex_t *) mutex;
     result = my_mutex_init(my_mutex);
+    printf("lock value: %d\n", (my_mutex)->lock);
     #endif
     return result;
 }

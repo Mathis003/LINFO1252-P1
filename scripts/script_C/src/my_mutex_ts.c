@@ -1,16 +1,19 @@
 #include "../headers/my_mutex_ts.h"
 
 
-int my_mutex_init(my_mutex_t **my_mutex)
+int my_mutex_init(my_mutex_t *my_mutex)
 {
-    *my_mutex = (my_mutex_t *) malloc(sizeof(my_mutex_t));
-    if (my_mutex == NULL)
-    {
-        perror("malloc()");
-        return EXIT_FAILURE;
-    }
+    // my_mutex = (my_mutex_t *) malloc(sizeof(my_mutex_t));
+    // if (my_mutex == NULL)
+    // {
+    //     perror("malloc()");
+    //     return EXIT_FAILURE;
+    // }
 
-    (*my_mutex)->lock = 0;
+    my_mutex->lock = 0;
+
+    printf("lock value: %d\n", my_mutex->lock);
+    
     return EXIT_SUCCESS;
 }
 
