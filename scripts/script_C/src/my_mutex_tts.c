@@ -12,13 +12,13 @@ int my_mutex_destroy(my_mutex_t *my_mutex)
     return 0;
 }
 
-inline int my_mutex_lock(my_mutex_t *my_mutex)
+int my_mutex_lock(my_mutex_t *my_mutex)
 {
     // TODO
     return 0;
 }
 
-inline int my_mutex_unlock(my_mutex_t *my_mutex)
+int my_mutex_unlock(my_mutex_t *my_mutex)
 {
     // TODO
     return 0;

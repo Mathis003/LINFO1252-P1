@@ -33,7 +33,7 @@ int counter = 0;
 //     jnz enter ; retour à enter: si ZF n'est pas vrai
 //     ret
 
-inline int my_mutex_lock(my_mutex_t *my_mutex)
+int my_mutex_lock(my_mutex_t *my_mutex)
 {
     int eax;
     asm volatile(
@@ -50,7 +50,7 @@ inline int my_mutex_lock(my_mutex_t *my_mutex)
     return eax;
 }
 
-inline int my_mutex_unlock(my_mutex_t *my_mutex)
+int my_mutex_unlock(my_mutex_t *my_mutex)
 {
     int eax;
     asm volatile(
