@@ -13,8 +13,8 @@ int my_mutex_init(my_mutex_t *my_mutex);
 
 int my_mutex_destroy(my_mutex_t *my_mutex);
 
-int my_mutex_lock(my_mutex_t *my_mutex);
+inline int my_mutex_lock(my_mutex_t *my_mutex);
 
-int my_mutex_unlock(my_mutex_t *my_mutex);
+inline int my_mutex_unlock(my_mutex_t *my_mutex);
 
 #endif // MY_MUTEX_TSS_H
