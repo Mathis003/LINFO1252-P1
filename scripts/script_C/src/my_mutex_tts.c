@@ -11,6 +11,7 @@ void my_mutex_destroy(my_mutex_t *my_mutex)
     my_mutex = NULL;
 }
 
+//TODO: REFAIRE TOUT L'ASSEMBLEUR ICI
 
 int my_mutex_lock(my_mutex_t *my_mutex)
 {

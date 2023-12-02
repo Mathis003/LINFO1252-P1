@@ -6,6 +6,7 @@ void my_mutex_init(my_mutex_t *my_mutex)
     my_mutex->lock = 0;
 }
 
+//TODO: REFAIRE TOUT L'ASSEMBLEUR ICI
 
 void my_mutex_destroy(my_mutex_t *my_mutex)
 {
