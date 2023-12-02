@@ -4,11 +4,6 @@
 void *create_arg_philosopher(int id, bool rightGreater, void *left_baguette, void *right_baguette)
 {
     args_philosopher_t *args_philosopher = malloc(sizeof(args_philosopher_t));
-    if (args_philosopher == NULL)
-    {
-        perror("malloc()");
-        return NULL;
-    }
     args_philosopher->id = id;
     args_philosopher->rightGreater = rightGreater;
     args_philosopher->left_baguette = left_baguette;
@@ -93,14 +88,7 @@ int main(int argc, char *argv[])
     my_mutex_t baguettes[NB_PHILOSOPHERS];
     #endif
 
-    for (int i = 0; i < NB_PHILOSOPHERS; i++)
-    {
-        if (init_mutex(&baguettes[i]) != 0)
-        {
-            perror("init_mutex()");
-            return EXIT_FAILURE;
-        }
-    }
+    for (int i = 0; i < NB_PHILOSOPHERS; i++) init_mutex(&baguettes[i]);
 
     bool rightGreater;
     int i = 0;
@@ -108,42 +96,11 @@ int main(int argc, char *argv[])
     {
         rightGreater = ((i + 1) % NB_PHILOSOPHERS > i) ? true : false;
         void *args = create_arg_philosopher(i, rightGreater, &baguettes[i], &baguettes[(i + 1) % NB_PHILOSOPHERS]);
-        if (args == NULL)
-        {
-            for (int j = 0; j < NB_PHILOSOPHERS; j++) destroy_mutex(&baguettes[j]);
-            return EXIT_FAILURE;
-        }
-
-        if (pthread_create(&philosophers[i], NULL, philosopher_function, args) != 0)
-        {
-            perror("pthread_create()");
-            free(args);
-            for (int j = 0; j < NB_PHILOSOPHERS; j++) destroy_mutex(&baguettes[j]);
-            return EXIT_FAILURE;
-        }
+        pthread_create(&philosophers[i], NULL, philosopher_function, args);
     }
 
-    for (int i = 0; i < NB_PHILOSOPHERS; i++)
-    {
-        if (pthread_join(philosophers[i], NULL) != 0)
-        {
-            perror("pthread_join()");
-            for (int j = 0; j < NB_PHILOSOPHERS; j++) destroy_mutex(&baguettes[j]);
-            return EXIT_FAILURE;
-        }
-    }
-
-    int error = 0;
-    for (int i = 0; i < NB_PHILOSOPHERS; i++)
-    {
-        if (destroy_mutex(&baguettes[i]) != 0) error = 1;
-    }
-
-    if (error)
-    {
-        perror("destroy_mutex()");
-        return EXIT_FAILURE;
-    }
-
+    for (int i = 0; i < NB_PHILOSOPHERS; i++) pthread_join(philosophers[i], NULL);
+    for (int i = 0; i < NB_PHILOSOPHERS; i++) destroy_mutex(&baguettes[i]);
+    
     return EXIT_SUCCESS;
 }

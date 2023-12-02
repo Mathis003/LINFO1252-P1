@@ -35,8 +35,6 @@ int remove_item();
 
 void *consumer(void *unused);
 
-void destroy_all(void);
-
 int main(int argc, char *argv[]);
 
 #endif // PRODUCER_CONSUMER_H

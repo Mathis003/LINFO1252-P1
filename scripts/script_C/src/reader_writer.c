@@ -89,23 +89,6 @@ void *writer(void *unused)
     return NULL;
 }
 
-int destroy_sems()
-{
-    int value = 0;
-    if (destroy_sem(&db_writer) != 0) value = 1;
-    if (destroy_sem(&db_reader) != 0) value = 1;
-    return value;
-}
-
-int destroy_all()
-{
-    int value = destroy_sems();
-    if (destroy_mutex(&writer_mutex) != 0) value = 1;
-    if (destroy_mutex(&reader_mutex) != 0) value = 1;
-    if (destroy_mutex(&general_mutex) != 0) value = 1;
-    return value;
-}
-
 int main(int argc, char *argv[])
 {
     if (argc != 3)
@@ -123,87 +106,30 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    int error = 0;
-    error += init_sem(&db_writer, 0, 1);
-    error += init_sem(&db_reader, 0, 1);
-    if (error != 0)
-    {
-        perror("init_sem()");
-        destroy_sems();
-        return EXIT_FAILURE;
-    }
-
-    if (init_mutex(&writer_mutex) != 0)
-    {
-        perror("init_mutex()");
-        destroy_sems();
-        return EXIT_FAILURE;
-    }
-
-    if (init_mutex(&reader_mutex) != 0)
-    {
-        perror("init_mutex()");
-        destroy_mutex(&writer_mutex);
-        destroy_sems();
-        return EXIT_FAILURE;
-    }
-
-    if (init_mutex(&general_mutex) != 0)
-    {
-        perror("init_mutex()");
-        destroy_sems();
-        destroy_mutex(&writer_mutex);
-        destroy_mutex(&reader_mutex);
-        return EXIT_FAILURE;
-    }
+    init_sem(&db_writer, 0, 1);
+    init_sem(&db_reader, 0, 1);
+    init_mutex(&writer_mutex);
+    init_mutex(&reader_mutex);
+    init_mutex(&general_mutex);
 
     pthread_t writers[nbWriters];
     pthread_t readers[nbReaders];
 
-    for (int i = 0; i < nbWriters; i++)
-    {
-        if (pthread_create(&writers[i], NULL, writer, NULL) != 0)
-        {
-            perror("pthread_create()");
-            destroy_all();
-            return EXIT_FAILURE;
-        }
-    }
-
-    for (int i = 0; i < nbReaders; i++)
-    {
-        if (pthread_create(&readers[i], NULL, reader, NULL) != 0)
-        {
-            perror("pthread_create()");
-            destroy_all();
-            return EXIT_FAILURE;
-        }
-    }
+    for (int i = 0; i < nbWriters; i++) pthread_create(&writers[i], NULL, writer, NULL);
+    for (int i = 0; i < nbReaders; i++) pthread_create(&readers[i], NULL, reader, NULL);
 
     // printf("Waiting for threads to finish...\n");
 
-    for (int i = 0; i < nbWriters; i++)
-    {
-        if (pthread_join(writers[i], NULL) != 0)
-        {
-            perror("pthread_join()");
-            destroy_all();
-            return EXIT_FAILURE;
-        }
-    }
-
-    for (int i = 0; i < nbReaders; i++)
-    {
-        if (pthread_join(readers[i], NULL) != 0)
-        {
-            perror("pthread_join()");
-            destroy_all();
-            return EXIT_FAILURE;
-        }
-    }
+    for (int i = 0; i < nbWriters; i++) pthread_join(writers[i], NULL);
+    for (int i = 0; i < nbReaders; i++) pthread_join(readers[i], NULL);
 
     // printf("readsdone: %d, writesdone: %d\n", readsDone, writesDone);
 
-    if (destroy_all() == 0) return EXIT_FAILURE;
+    destroy_sem(&db_writer);
+    destroy_sem(&db_reader);
+    destroy_mutex(&writer_mutex);
+    destroy_mutex(&reader_mutex);
+    destroy_mutex(&general_mutex);
+
     return EXIT_SUCCESS;
 }

@@ -32,10 +32,6 @@ void *reader(void *unused);
 
 void *writer(void *unused);
 
-int destroy_sems();
-
-int destroy_all();
-
 int main(int argc, char *argv[]);
 
 #endif // READER_WRITER_H

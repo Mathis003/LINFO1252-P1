@@ -35,35 +35,12 @@ int main(int argc, char *argv[])
 
     NBER_ITER = 6400 / NB_THREADS;
 
-    if (init_mutex(&my_mutex) != 0)
-    {
-        perror("init_mutex()");
-        return EXIT_FAILURE;
-    }
+    init_mutex(&my_mutex);
 
-    for (int i = 0; i < NB_THREADS; i++)
-    {
-        if (pthread_create(&threads[i], NULL, thread_function, NULL) != 0)
-        {
-            perror("pthread_create()");
-            return EXIT_FAILURE;
-        }
-    }
+    for (int i = 0; i < NB_THREADS; i++) pthread_create(&threads[i], NULL, thread_function, NULL);
+    for (int i = 0; i < NB_THREADS; i++) pthread_join(threads[i], NULL);
 
-    for (int i = 0; i < NB_THREADS; i++)
-    {
-        if (pthread_join(threads[i], NULL) != 0)
-        {
-            perror("pthread_join()");
-            return EXIT_FAILURE;
-        }
-    }
-
-    if (destroy_mutex(my_mutex) != 0)
-    {
-        perror("destroy_mutex()");
-        return EXIT_FAILURE;
-    }
+    destroy_mutex(my_mutex);
 
     return EXIT_SUCCESS;
 }

@@ -65,7 +65,8 @@ int init_sem(void *sem, int pshared, unsigned int value)
     result = sem_init(POSIX_sem, pshared, value);
     #else
     my_sem_t *my_sem = (my_sem_t *) sem;
-    result = my_sem_init(my_sem, value);
+    result = 0;
+    my_sem_init(my_sem, value);
     #endif
     return result;
 }
@@ -78,7 +79,8 @@ int wait_sem(void *sem)
     result = sem_wait(POSIX_sem);
     #else
     my_sem_t *my_sem = (my_sem_t *) sem;
-    result = my_sem_wait(my_sem);
+    result = 0;
+    my_sem_wait(my_sem);
     #endif
     return result;
 }
@@ -91,7 +93,8 @@ int post_sem(void *sem)
     result = sem_post(POSIX_sem);
     #else
     my_sem_t *my_sem = (my_sem_t *) sem;
-    result = my_sem_post(my_sem);
+    result = 0;
+    my_sem_post(my_sem);
     #endif
     return result;
 }
