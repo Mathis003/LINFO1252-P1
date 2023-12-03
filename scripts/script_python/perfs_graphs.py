@@ -9,16 +9,15 @@ if len(sys.argv) != 2:
     sys.exit(1)
 
 name_file = sys.argv[1]
-csv_files = ["./csv_files/perfs_" + name_file + "_TS.csv", "./csv_files/perfs_" + name_file + "_TTS.csv", "./csv_files/perfs_" + name_file + "_BTTS.csv"]
+csv_files = ["./csv_files/perfs_" + name_file + "_POSIX.csv", "./csv_files/perfs_" + name_file + "_TS.csv", "./csv_files/perfs_" + name_file + "_TTS.csv", "./csv_files/perfs_" + name_file + "_BTTS.csv"]
 
-
-datas = [pd.read_csv(csv_files[0]), pd.read_csv(csv_files[1]), pd.read_csv(csv_files[2])]
+datas = [pd.read_csv(csv_files[0]), pd.read_csv(csv_files[1]), pd.read_csv(csv_files[2]), pd.read_csv(csv_files[3])]
 nbThreads = datas[0]['NbThreads']
 
 means = []
 std_devs = []
 
-for i in range(3):
+for i in range(4):
     datas[i] = datas[i].drop('NbThreads', axis=1)
     datas[i] = datas[i].values
 
@@ -30,9 +29,9 @@ for i in range(3):
 
 plt.figure()
 
-colors = ['lightblue', 'lightgreen', 'lightpink', '', '', '', '']
+colors = ['lightblue', 'lightgreen', 'lightpink', 'lightgray', '', '', '']
 
-for i in range(3):
+for i in range(4):
     color = colors[i]
 
     boxplot = plt.boxplot(datas[i], vert=True, meanline=True, showmeans=True, patch_artist=True)
@@ -55,12 +54,11 @@ plt.savefig("graphs/pdf/perfs_graph_" + name_file + ".pdf")
 plt.show()
 
 
-
 plt.figure()
 
-labels = ["test-and-set", "test-and-test-and-set", "backoff-test-and-test-and-set"]
+labels = ["POSIX", "test-and-set", "test-and-test-and-set", "backoff-test-and-test-and-set"]
 
-for i in range(3):
+for i in range(4):
     means = []
     for j in range(len(datas[i][0])):
         mean = 0
