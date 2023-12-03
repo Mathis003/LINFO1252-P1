@@ -1,18 +1,12 @@
 #ifndef MUTEX_H
 #define MUTEX_H
 
-#ifdef TS_MUTEX
-#include "my_mutex_ts.h"
-#include "my_sem.h"
-#elif TTS_MUTEX
-#include "my_mutex_tts.h"
-#include "my_sem.h"
-#elif BTTS_MUTEX
-#include "my_mutex_btts.h"
-#include "my_sem.h"
-#else
+#ifdef POSIX
 #include <stddef.h>
 #include <semaphore.h>
+#else
+#include "my_mutex.h"
+#include "my_sem.h"
 #endif
 
 int init_mutex(void *mutex);

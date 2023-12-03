@@ -1,9 +1,9 @@
-#include "../headers/my_mutex_ts.h"
+#include "../headers/my_mutex.h"
 
 
 void my_mutex_init(my_mutex_t *my_mutex)
 {
-    my_mutex->lock = 0; // Set lock to 0 (= free)
+    my_mutex->lock = 0; // Set lock to 0 (=free)
 }
 
 
@@ -11,6 +11,7 @@ void my_mutex_destroy(my_mutex_t *my_mutex)
 {
     my_mutex = NULL; // Make my_mutex unusable
 }
+
 
 void exch(volatile int *lock_value, int *result)
 {
@@ -20,6 +21,26 @@ void exch(volatile int *lock_value, int *result)
 
 int my_mutex_lock(my_mutex_t *my_mutex)
 {
+    #ifdef BTTS_MUTEX
+
+    int incr = 2;
+    int time_max_usec = 1000; // To test to find the best value
+    int time;
+
+    while (my_mutex->lock == 1)
+    {
+        time = incr * incr;
+        if (time > time_max_usec) time = time_max_usec;
+        else                      incr++;
+        usleep(time);
+    }
+
+    #elif TTS_MUTEX
+
+    while (my_mutex->lock == 1) {};
+
+    #endif
+
     int result = 1;
     while (1)
     {
@@ -29,7 +50,7 @@ int my_mutex_lock(my_mutex_t *my_mutex)
     return result;
 }
 
-int my_mutex_unlock(my_mutex_t *my_mutex)
+int my_mutex_unlock(my_mutex_t* my_mutex)
 {
     int result = 0;
     exch(&(my_mutex->lock), &result);

@@ -1,9 +1,10 @@
-#ifndef MY_MUTEX_TSS_H
-#define MY_MUTEX_TSS_H
+#ifndef MY_MUTEX_H
+#define MY_MUTEX_H
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdatomic.h>
+#include <unistd.h>
 
 typedef struct my_mutex {
     volatile int lock;
@@ -19,4 +20,4 @@ int my_mutex_lock(my_mutex_t *my_mutex);
 
 int my_mutex_unlock(my_mutex_t *my_mutex);
 
-#endif // MY_MUTEX_TSS_H
+#endif // MY_MUTEX_H
