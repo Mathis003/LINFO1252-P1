@@ -3,7 +3,7 @@
 
 void my_mutex_init(my_mutex_t *my_mutex)
 {
-    my_mutex->lock = 0; // Mutex free
+    my_mutex->lock = 0; // Set lock to 0 (=free)
 }
 
 
