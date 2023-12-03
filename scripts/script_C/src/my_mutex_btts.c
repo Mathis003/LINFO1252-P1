@@ -3,41 +3,37 @@
 
 void my_mutex_init(my_mutex_t *my_mutex)
 {
-    my_mutex->lock = 0;
+    my_mutex->lock = 0; // Set lock to 0 (=free)
 }
 
-//TODO: REFAIRE TOUT L'ASSEMBLEUR ICI
 
 void my_mutex_destroy(my_mutex_t *my_mutex)
 {
-    my_mutex->lock = 0;
-    my_mutex = NULL;
+    my_mutex = NULL; // Make my_mutex unusable
 }
 
 
-int my_mutex_lock(my_mutex_t *my_mutex, int time_usec)
+int my_mutex_lock(my_mutex_t *my_mutex, int time_max_usec)
 {
-    int ret;
-    int i=2;
+    int result;
+    int incr = 2;
     while (my_mutex->lock == 1)
     {
-        if(i^2 > time_usec) usleep(time_usec);
-        else
-        {
-            usleep(i^2);
-            i++;
-        }
+        time = incr * incr;
+        if (time > time_max_usec) time = time_max_usec;
+        else                      incr++;
+        usleep(time);
     }
-    asm volatile(
-        "atomic:;"
-        "xchg %0, %1;"
-        "testl %1, %1;"
-        "jnz atomic;"
+    
+    asm volatile("enter:\n\t"        // label "enter"
+                 "xchg %0, %1\n\t"   // Exchange my_mutex->lock with 1 (atomic instruction)
+                 "testl %1, %1\n\t"  // AND operation => set flag to the result
+                 "jnz enter\n\t"     // flag != 0 => Jump label "enter"
 
-        :"=m"(my_mutex->lock), "=a"(ret)
-        :"a"(1), "m"(my_mutex->lock
-    ));
-    return ret;
+                 :"=m"(my_mutex->lock), "=a"(result) // %0 = my_mutex->lock, %1 = result
+                 :"a"(1), "m"(my_mutex->lock)        // Initialization : %1 set to 1, %0 set to my_mutex->lock
+    );
+    return result;
 }
 
 int my_mutex_unlock(my_mutex_t *my_mutex)
