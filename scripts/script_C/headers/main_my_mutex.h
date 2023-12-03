@@ -6,9 +6,8 @@
 
 #include "user_defined_sync.h"
 
-my_mutex_t *my_mutex;
-
-int NBER_ITER;
+my_mutex_t my_mutex;
+int NB_THREADS;
 
 void process(void);
 

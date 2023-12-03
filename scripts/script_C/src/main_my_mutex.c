@@ -7,11 +7,11 @@ void process(void)
 
 void *thread_function(void *arg)
 {
-    for (int i = 0; i < NBER_ITER; i++)
+    for (int i = 0; i < 6400 / NB_THREADS; i++)
     {
-        lock_mutex(my_mutex);
+        lock_mutex(&my_mutex);
         process();
-        unlock_mutex(my_mutex);
+        unlock_mutex(&my_mutex);
     }
     return NULL;
 }
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    const int NB_THREADS = atoi(argv[1]);
+    NB_THREADS = atoi(argv[1]);
     pthread_t threads[NB_THREADS];
 
     if (NB_THREADS <= 0)
@@ -33,14 +33,10 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    NBER_ITER = 6400 / NB_THREADS;
-
     init_mutex(&my_mutex);
-
     for (int i = 0; i < NB_THREADS; i++) pthread_create(&threads[i], NULL, thread_function, NULL);
     for (int i = 0; i < NB_THREADS; i++) pthread_join(threads[i], NULL);
-
-    destroy_mutex(my_mutex);
+    destroy_mutex(&my_mutex);
 
     return EXIT_SUCCESS;
 }
