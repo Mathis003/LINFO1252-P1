@@ -30,7 +30,7 @@ colors = ['lightblue', 'lightgreen', 'lightpink', '', '', '', '']
 for i in range(3):
     color = colors[i]
     boxplot = plt.boxplot(datas[i], vert=True, meanline=True, showmeans=True, patch_artist=True)
-    plt.errorbar(range(1, len(nbThreads) + 1), means[i], yerr=std_devs[i], fmt='ro', markersize=2, label='Standard deviation')
+    plt.errorbar(range(1, len(nbThreads) + 1), means[i], yerr=std_devs[i], fmt='ro', markersize=2, label='Standard deviation' if i == 1 else None)
     
     for patch, unused in zip(boxplot['boxes'], colors):
         patch.set_facecolor(color)
