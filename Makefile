@@ -91,6 +91,14 @@ build_main_my_mutex_BTTS: $(C_DIR)/main_my_mutex.c $(DEPENDENCIES_PROGRAMS) | $(
 
 ### Run : BEGIN ###
 
+run_all: run_philosopher run_producer_consumer run_reader_writer
+
+run_philosopher: run_philosopher_POSIX run_philosopher_TS run_philosopher_TTS run_philosopher_BTTS
+
+run_producer_consumer: run_producer_consumer_POSIX run_producer_consumer_TS run_producer_consumer_TTS run_producer_consumer_BTTS
+
+run_reader_writer: run_reader_writer_POSIX run_reader_writer_TS run_reader_writer_TTS run_reader_writer_BTTS
+
 run_philosopher_POSIX: build_philosopher_POSIX
 	@./$(BIN_DIR)/philosopher_POSIX.bin $(NB_THREADS)
 
