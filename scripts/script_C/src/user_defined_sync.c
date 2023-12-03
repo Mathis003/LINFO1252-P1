@@ -1,4 +1,4 @@
-#include "../headers/mutex.h"
+#include "../headers/user_defined_sync.h"
 
 int init_mutex(void *mutex)
 {

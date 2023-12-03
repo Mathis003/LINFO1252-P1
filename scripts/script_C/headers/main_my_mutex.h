@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 
-#include "mutex.h"
+#include "user_defined_sync.h"
 
 my_mutex_t *my_mutex;
 

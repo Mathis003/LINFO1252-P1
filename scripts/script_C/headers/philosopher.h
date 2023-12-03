@@ -6,7 +6,7 @@
 #include <pthread.h>
 #include <stdbool.h>
 
-#include "mutex.h"
+#include "user_defined_sync.h"
 
 int NB_PHILOSOPHERS;
 

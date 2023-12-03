@@ -1,6 +1,5 @@
 #include "../headers/my_mutex.h"
 
-
 void my_mutex_init(my_mutex_t *my_mutex)
 {
     my_mutex->lock = 0; // Set lock to 0 (=free)

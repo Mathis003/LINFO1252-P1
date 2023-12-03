@@ -1,6 +1,5 @@
 #include "../headers/philosopher.h"
 
-
 void *create_arg_philosopher(int id, void *left_baguette, void *right_baguette)
 {
     args_philosopher_t *args_philosopher = malloc(sizeof(args_philosopher_t));

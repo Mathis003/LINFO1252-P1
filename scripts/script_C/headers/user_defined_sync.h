@@ -1,5 +1,5 @@
-#ifndef MUTEX_H
-#define MUTEX_H
+#ifndef USER_DEFINED_SYNC_H
+#define USER_DEFINED_SYNC_H
 
 #ifdef POSIX
 #include <stddef.h>
@@ -25,4 +25,4 @@ int post_sem(void *sem);
 
 int destroy_sem(void *sem);
 
-#endif // MUTEX_H
+#endif // USER_DEFINED_SYNC_H

@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <pthread.h>
 
-#include "mutex.h"
+#include "user_defined_sync.h"
 
 #define NB_READS 2560
 #define NB_WRITES 640

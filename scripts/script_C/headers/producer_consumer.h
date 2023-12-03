@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <pthread.h>
 
-#include "mutex.h"
+#include "user_defined_sync.h"
 
 #define NB_PRODUCTIONS 8192
 #define CAPACITY_BUFFER 8
