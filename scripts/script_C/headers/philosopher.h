@@ -8,15 +8,16 @@
 
 #include "mutex.h"
 
+int NB_PHILOSOPHERS;
+
 typedef struct args_philosopher
 {
     int id;
-    bool rightGreater;
     void *left_baguette;
     void *right_baguette;
 } args_philosopher_t;
 
-void *create_arg_philosopher(int id, bool rightGreater, void *left_baguette, void *right_baguette);
+void *create_arg_philosopher(int id, void *left_baguette, void *right_baguette);
 
 void philosopher_eating(int id, bool rightGreater, void *left_baguette, void *right_baguette);
 

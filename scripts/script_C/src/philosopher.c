@@ -1,11 +1,10 @@
 #include "../headers/philosopher.h"
 
 
-void *create_arg_philosopher(int id, bool rightGreater, void *left_baguette, void *right_baguette)
+void *create_arg_philosopher(int id, void *left_baguette, void *right_baguette)
 {
     args_philosopher_t *args_philosopher = malloc(sizeof(args_philosopher_t));
     args_philosopher->id = id;
-    args_philosopher->rightGreater = rightGreater;
     args_philosopher->left_baguette = left_baguette;
     args_philosopher->right_baguette = right_baguette;
     return args_philosopher;
@@ -14,8 +13,6 @@ void *create_arg_philosopher(int id, bool rightGreater, void *left_baguette, voi
 
 void philosopher_eating(int id, bool rightGreater, void *left_baguette, void *right_baguette)
 {
-    // printf("Philosopher [%d] is eating\n", id);
-    
     if (rightGreater)
     {
         lock_mutex(left_baguette);
@@ -45,11 +42,11 @@ void *philosopher_function(void* arg)
     args_philosopher_t *arg_philosopher = (args_philosopher_t *) arg;
 
     int id = arg_philosopher->id;
-    bool rightGreater = arg_philosopher->rightGreater;
     void *left_baguette = arg_philosopher->left_baguette;
     void *right_baguette = arg_philosopher->right_baguette;
+    bool rightGreater = ((id + 1) % NB_PHILOSOPHERS > id) ? true : false;
 
-    for (int i = 0; i < 10000000; i++)
+    for (int i = 0; i < 1000000; i++)
     {
         // Philosopher thinks
         philosopher_thinking(id);
@@ -72,7 +69,7 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    const int NB_PHILOSOPHERS = atoi(argv[1]);
+    NB_PHILOSOPHERS = atoi(argv[1]);
 
     if (NB_PHILOSOPHERS <= 1)
     {
@@ -89,16 +86,7 @@ int main(int argc, char *argv[])
     #endif
 
     for (int i = 0; i < NB_PHILOSOPHERS; i++) init_mutex(&baguettes[i]);
-
-    bool rightGreater;
-    int i = 0;
-    for (i = 0; i < NB_PHILOSOPHERS; i++)
-    {
-        rightGreater = ((i + 1) % NB_PHILOSOPHERS > i) ? true : false;
-        void *args = create_arg_philosopher(i, rightGreater, &baguettes[i], &baguettes[(i + 1) % NB_PHILOSOPHERS]);
-        pthread_create(&philosophers[i], NULL, philosopher_function, args);
-    }
-
+    for (int i = 0; i < NB_PHILOSOPHERS; i++) pthread_create(&philosophers[i], NULL, philosopher_function, create_arg_philosopher(i, &baguettes[i], &baguettes[(i + 1) % NB_PHILOSOPHERS]));
     for (int i = 0; i < NB_PHILOSOPHERS; i++) pthread_join(philosophers[i], NULL);
     for (int i = 0; i < NB_PHILOSOPHERS; i++) destroy_mutex(&baguettes[i]);
     
