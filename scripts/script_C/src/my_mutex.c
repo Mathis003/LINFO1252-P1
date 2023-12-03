@@ -23,7 +23,7 @@ int my_mutex_lock(my_mutex_t *my_mutex)
     #ifdef BTTS_MUTEX
 
     int incr = 2;
-    int time_max_usec = 100; // To test to find the best value
+    int time_max_usec = 50; // Seems to be optimal (test done)
     int time;
 
     while (my_mutex->lock == 1)
@@ -45,7 +45,7 @@ int my_mutex_lock(my_mutex_t *my_mutex)
     {
         exch(&(my_mutex->lock), &result);
     } while (result == 1);
-    
+
     return result;
 }
 
