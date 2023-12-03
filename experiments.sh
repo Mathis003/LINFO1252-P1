@@ -1,5 +1,5 @@
 NB_TIMES=5
-SEQ_NB_THREADS=(2 4 8 16 32 64)
+SEQ_NB_THREADS=(1 2 4 8 16 32 64)
 TIMES=()
 SEQ_ITER=(0 1 2 3)
 
@@ -16,10 +16,7 @@ for k in "${SEQ_ITER[@]}"; do
     for i in "${SEQ_NB_THREADS[@]}"; do
         for j in $(seq 0 $NB_TIMES); do
             ARGS=$(( ${i} / 2 ))
-            START_TIME=$(date +%s.%N)
-            $EXEC_NAME $ARGS $ARGS > /dev/null
-            END_TIME=$(date +%s.%N)
-            TIME=$(echo "$END_TIME - $START_TIME" | bc)
+            TIME=$(/usr/bin/time -f %e $EXEC_NAME $ARGS $ARGS 2>&1 | tail -n 1)
             TIMES[$j]=$TIME
         done
         TIMES_LINE=$(printf "%d%s" $i $(for ((j=0; j<$NB_TIMES; j++)); do printf ",%s" "${TIMES[$j]}"; done))
@@ -40,10 +37,7 @@ for k in "${SEQ_ITER[@]}"; do
     for i in "${SEQ_NB_THREADS[@]}"; do
         for j in $(seq 0 $NB_TIMES); do
             ARGS=$(( ${i} / 2 ))
-            START_TIME=$(date +%s.%N)
-            $EXEC_NAME $ARGS $ARGS > /dev/null
-            END_TIME=$(date +%s.%N)
-            TIME=$(echo "$END_TIME - $START_TIME" | bc)
+            TIME=$(/usr/bin/time -f %e $EXEC_NAME $ARGS $ARGS 2>&1 | tail -n 1)
             TIMES[$j]=$TIME
         done
         TIMES_LINE=$(printf "%d%s" $i $(for ((j=0; j<$NB_TIMES; j++)); do printf ",%s" "${TIMES[$j]}"; done))
