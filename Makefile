@@ -182,15 +182,21 @@ csv_main_my_mutex_BTTS: build_main_my_mutex_BTTS one_arg_main_my_mutex_BTTS
 
 ### PLOT : BEGIN ###
 
-plot: $(addprefix plot_, $(PROGRAMS))
-plot_%:
-	@mkdir -p $(GRAPHS_DIR)
-	@python3 $(PYTHON_DIR)/perfs_graphs.py $(CSV_DIR)/perfs_$*.csv
+plot: plot_main_my_mutex plot_philosopher plot_reader_writer plot_producer_consumer
+
+plot_main_my_mutex: | $(GRAPHS_DIR)
+	@python3 $(PYTHON_DIR)/perfs_graph_mutex.py
+
+plot_%: | $(GRAPHS_DIR)
+	@python3 $(PYTHON_DIR)/perfs_graphs.py $*
+
+### PLOT : END ###
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
-### PLOT : END ###
+$(GRAPHS_DIR):
+	@mkdir -p $(GRAPHS_DIR)
 
 ### Clean : BEGIN ###
 
