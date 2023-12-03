@@ -22,7 +22,6 @@ HALF_THREADS=$(shell echo $$(( $(NB_THREADS) / 2 )))
 .PRECIOUS: $(BIN_DIR)/%.bin
 
 make: build
-	@bash experiments.sh
 	
 
 ### Build : BEGIN ###
