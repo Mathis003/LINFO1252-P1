@@ -15,7 +15,7 @@ void my_mutex_destroy(my_mutex_t *my_mutex)
 void exch(volatile int *lock_value, int *result)
 {
     asm volatile("xchg %0, %1\n\t"
-                 :"+m" (*lock_value), "+r" (*result));
+                 :"+r" (*result), "+m" (*lock_value));
 }
 
 int my_mutex_lock(my_mutex_t *my_mutex)
