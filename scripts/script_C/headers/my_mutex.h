@@ -20,6 +20,4 @@ int my_mutex_lock(my_mutex_t *my_mutex);
 
 int my_mutex_unlock(my_mutex_t *my_mutex);
 
-void looped(my_mutex_t *my_mutex);
-
 #endif // MY_MUTEX_H
