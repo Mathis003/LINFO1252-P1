@@ -198,7 +198,8 @@ $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
 $(GRAPHS_DIR):
-	@mkdir -p $(GRAPHS_DIR)
+	@mkdir -p $(GRAPHS_DIR)/png
+	@mkdir -p $(GRAPHS_DIR)/pdf
 
 $(CSV_DIR):
 	@mkdir -p $(CSV_DIR)
