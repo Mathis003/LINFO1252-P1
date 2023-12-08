@@ -16,19 +16,19 @@ void my_sem_destroy(my_sem_t *sem)
 
 void my_sem_wait(my_sem_t *sem)
 {
-    lock_mutex(sem->mutex);
+    my_mutex_lock(sem->mutex);
     while (sem->value <= 0)
     {
-        unlock_mutex(sem->mutex);
-        lock_mutex(sem->mutex);
+        my_mutex_unlock(sem->mutex);
+        my_mutex_lock(sem->mutex);
     }
     (sem->value)--;
-    unlock_mutex(sem->mutex);
+    my_mutex_unlock(sem->mutex);
 }
 
 void my_sem_post(my_sem_t *sem)
 {
-    lock_mutex(sem->mutex);
+    my_mutex_lock(sem->mutex);
     (sem->value)++;
-    unlock_mutex(sem->mutex);
+    my_mutex_unlock(sem->mutex);
 }

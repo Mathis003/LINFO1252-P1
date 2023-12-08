@@ -9,6 +9,8 @@
 #include "my_sem.h"
 #endif
 
+#include <pthread.h>
+
 int init_mutex(void *mutex);
 
 int destroy_mutex(void *mutex);

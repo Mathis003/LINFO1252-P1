@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <pthread.h>
 
 #include "user_defined_sync.h"
 

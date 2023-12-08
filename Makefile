@@ -31,58 +31,58 @@ build: build_philosopher build_reader_writer build_producer_consumer
 
 build_philosopher: build_philosopher_POSIX build_philosopher_TS build_philosopher_TTS build_philosopher_BTTS
 
-build_philosopher_POSIX: $(C_DIR)/philosopher.c $(DEPENDENCIES_PROGRAMS_POSIX) | $(BIN_DIR)
+build_philosopher_POSIX: $(DEPENDENCIES_PROGRAMS_POSIX) $(C_DIR)/philosopher.c | $(BIN_DIR)
 	@$(CC) -D POSIX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/philosopher_POSIX.bin $^
 
-build_philosopher_TS: $(C_DIR)/philosopher.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_philosopher_TS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/philosopher.c | $(BIN_DIR)
 	@$(CC) -D TS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/philosopher_TS.bin $^
 
-build_philosopher_TTS: $(C_DIR)/philosopher.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_philosopher_TTS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/philosopher.c | $(BIN_DIR)
 	@$(CC) -D TTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/philosopher_TTS.bin $^
 
-build_philosopher_BTTS: $(C_DIR)/philosopher.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_philosopher_BTTS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/philosopher.c | $(BIN_DIR)
 	@$(CC) -D BTTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/philosopher_BTTS.bin $^
 
 
 build_reader_writer: build_reader_writer_POSIX build_reader_writer_TS build_reader_writer_TTS build_reader_writer_BTTS
 
-build_reader_writer_POSIX: $(C_DIR)/reader_writer.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_reader_writer_POSIX: $(DEPENDENCIES_PROGRAMS_POSIX) $(C_DIR)/reader_writer.c | $(BIN_DIR)
 	@$(CC) -D POSIX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/reader_writer_POSIX.bin $^
 
-build_reader_writer_TS: $(C_DIR)/reader_writer.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_reader_writer_TS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/reader_writer.c | $(BIN_DIR)
 	@$(CC) -D TS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/reader_writer_TS.bin $^
 
-build_reader_writer_TTS: $(C_DIR)/reader_writer.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_reader_writer_TTS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/reader_writer.c | $(BIN_DIR)
 	@$(CC) -D TTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/reader_writer_TTS.bin $^
 
-build_reader_writer_BTTS: $(C_DIR)/reader_writer.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_reader_writer_BTTS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/reader_writer.c | $(BIN_DIR)
 	@$(CC) -D BTTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/reader_writer_BTTS.bin $^
 
 
 build_producer_consumer: build_producer_consumer_POSIX build_producer_consumer_TS build_producer_consumer_TTS build_producer_consumer_BTTS
 
-build_producer_consumer_POSIX: $(C_DIR)/producer_consumer.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_producer_consumer_POSIX: $(DEPENDENCIES_PROGRAMS_POSIX) $(C_DIR)/producer_consumer.c | $(BIN_DIR)
 	@$(CC) -D POSIX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/producer_consumer_POSIX.bin $^
 
-build_producer_consumer_TS: $(C_DIR)/producer_consumer.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_producer_consumer_TS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/producer_consumer.c | $(BIN_DIR)
 	@$(CC) -D TS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/producer_consumer_TS.bin $^
 
-build_producer_consumer_TTS: $(C_DIR)/producer_consumer.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_producer_consumer_TTS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/producer_consumer.c | $(BIN_DIR)
 	@$(CC) -D TTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/producer_consumer_TTS.bin $^
 
-build_producer_consumer_BTTS: $(C_DIR)/producer_consumer.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_producer_consumer_BTTS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/producer_consumer.c | $(BIN_DIR)
 	@$(CC) -D BTTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/producer_consumer_BTTS.bin $^
 
 
 build_main_my_mutex: build_main_my_mutex_TS build_main_my_mutex_TTS build_main_my_mutex_BTTS
 
-build_main_my_mutex_TS: $(C_DIR)/main_my_mutex.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_main_my_mutex_TS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/main_my_mutex.c | $(BIN_DIR)
 	@$(CC) -D TS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/main_my_mutex_TS.bin $^
 
-build_main_my_mutex_TTS: $(C_DIR)/main_my_mutex.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_main_my_mutex_TTS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/main_my_mutex.c | $(BIN_DIR)
 	@$(CC) -D TTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/main_my_mutex_TTS.bin $^
 
-build_main_my_mutex_BTTS: $(C_DIR)/main_my_mutex.c $(DEPENDENCIES_PROGRAMS) | $(BIN_DIR)
+build_main_my_mutex_BTTS: $(DEPENDENCIES_PROGRAMS) $(C_DIR)/main_my_mutex.c | $(BIN_DIR)
 	@$(CC) -D BTTS_MUTEX $(CFLAGS) $(LDFLAGS) -o $(BIN_DIR)/main_my_mutex_BTTS.bin $^
 
 ### Build : END ###
