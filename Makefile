@@ -1,12 +1,12 @@
 CC=gcc
-CFLAGS=-g -pthread
+CFLAGS=-g -Wall -Werror -pthread
 LDFLAGS=-lpthread
 
 SRC_DIR=scripts
 BASH_DIR=$(SRC_DIR)/script_bash
 PYTHON_DIR=$(SRC_DIR)/script_python
 C_DIR=$(SRC_DIR)/script_C/src
-CSV_DIR=csv_files
+CSV_DIR=csv_files_LOCAL
 GRAPHS_DIR=graphs
 BIN_DIR=bin
 
@@ -148,13 +148,13 @@ run_main_my_mutex_BTTS: build_main_my_mutex_BTTS
 
 csv: csv_reader_writer csv_main_my_mutex csv_producer_consumer csv_philosopher
 
-one_arg_main_my_mutex_%:
+one_arg_main_my_mutex_%: | $(CSV_DIR)
 	@bash $(BASH_DIR)/perfs_one_arg.sh $(BIN_DIR)/main_my_mutex_$*.bin $(CSV_DIR)/perfs_main_my_mutex_$*.csv 0
 
-one_arg_%:
+one_arg_%: | $(CSV_DIR)
 	@bash $(BASH_DIR)/perfs_one_arg.sh $(BIN_DIR)/$*.bin $(CSV_DIR)/perfs_$*.csv 1
 
-two_args_%:
+two_args_%: | $(CSV_DIR)
 	@bash $(BASH_DIR)/perfs_two_args.sh $(BIN_DIR)/$*.bin $(CSV_DIR)/perfs_$*.csv
 
 csv_philosopher: csv_philosopher_POSIX csv_philosopher_TS csv_philosopher_TTS csv_philosopher_BTTS
@@ -199,6 +199,9 @@ $(BIN_DIR):
 
 $(GRAPHS_DIR):
 	@mkdir -p $(GRAPHS_DIR)
+
+$(CSV_DIR):
+	@mkdir -p $(CSV_DIR)
 
 ### Clean : BEGIN ###
 

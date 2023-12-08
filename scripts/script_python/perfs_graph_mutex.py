@@ -4,7 +4,7 @@ import numpy as np
 import sys
 import os
 
-csv_files = ["./INGINIOUS_CSV/perfs_main_my_mutex_TS.csv", "./INGINIOUS_CSV/perfs_main_my_mutex_TTS.csv", "./INGINIOUS_CSV/perfs_main_my_mutex_BTTS.csv"]
+csv_files = ["./csv_files/perfs_main_my_mutex_TS.csv", "./csv_files/perfs_main_my_mutex_TTS.csv", "./csv_files/perfs_main_my_mutex_BTTS.csv"]
 
 datas = [pd.read_csv(csv_files[0]), pd.read_csv(csv_files[1]), pd.read_csv(csv_files[2])]
 means = []
@@ -21,10 +21,9 @@ for i in range(3):
 
     datas[i] = datas[i].transpose()
 
+colors = ['lightblue', 'lightgreen', 'lightpink', '#ff9999', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6']
 
 plt.figure(figsize=(10, 12))
-
-colors = ['lightblue', 'lightgreen', 'lightpink', '#ff9999', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6']
 
 # First subplot
 plt.subplot(3, 1, 1)
