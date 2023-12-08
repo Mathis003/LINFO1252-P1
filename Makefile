@@ -22,11 +22,10 @@ HALF_THREADS=$(shell echo $$(( $(NB_THREADS) / 2 )))
 .PRECIOUS: $(BIN_DIR)/%.bin
 
 make: build
-	
 
 ### Build : BEGIN ###
 
-build: build_philosopher build_reader_writer build_producer_consumer
+build: build_philosopher build_reader_writer build_producer_consumer build_main_my_mutex
 
 
 build_philosopher: build_philosopher_POSIX build_philosopher_TS build_philosopher_TTS build_philosopher_BTTS
