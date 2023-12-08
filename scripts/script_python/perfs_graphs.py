@@ -26,12 +26,21 @@ for i in range(4):
 
     datas[i] = datas[i].transpose()
 
+unit_time = "ms"
+if (name_file == "philosopher"):
+    unit_time = "s"
+else:
+    for i in range(4):
+        datas[i] = np.multiply(datas[i], 1000)
+        means[i] = np.multiply(means[i], 1000)
+        std_devs[i] = np.multiply(std_devs[i], 1000)
+
 colors = ['lightblue', 'lightgreen', 'lightpink', '#ff9999', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6']
 
-plt.figure(figsize=(10, 12))
+plt.figure(figsize=(12, 12))
 
 # First subplot
-plt.subplot(2, 2, 4)
+plt.subplot(2, 2, 1)
 
 boxplot = plt.boxplot(datas[0], vert=True, meanline=True, showmeans=True, patch_artist=True)
 plt.errorbar(range(1, len(nbThreads) + 1), means[0], yerr=std_devs[0], fmt='ro', markersize=2, label='Standard deviation')
@@ -44,6 +53,8 @@ std_patch = plt.Line2D([0, 0], [0, 1], marker='o', color='red', linewidth=1, lin
 
 plt.title("POSIX implementation")
 plt.xticks(np.arange(1, len(nbThreads) + 1), nbThreads)
+plt.xlabel('Number of Threads []')
+plt.ylabel('Execution Time [{}]'.format(unit_time))
 plt.ylim(0)
 plt.legend(handles=[median_patch, mean_patch, std_patch])
 plt.grid()
@@ -62,6 +73,8 @@ std_patch = plt.Line2D([0, 0], [0, 1], marker='o', color='red', linewidth=1, lin
 
 plt.title("Test And Set algorithm")
 plt.xticks(np.arange(1, len(nbThreads) + 1), nbThreads)
+plt.xlabel('Number of Threads []')
+plt.ylabel('Execution Time [{}]'.format(unit_time))
 plt.ylim(0)
 plt.legend(handles=[median_patch, mean_patch, std_patch])
 plt.grid()
@@ -81,10 +94,11 @@ std_patch = plt.Line2D([0, 0], [0, 1], marker='o', color='red', linewidth=1, lin
 
 plt.title("Test And Test And Set algorithm")
 plt.xticks(np.arange(1, len(nbThreads) + 1), nbThreads)
+plt.xlabel('Number of Threads []')
+plt.ylabel('Execution Time [{}]'.format(unit_time))
 plt.ylim(0)
 plt.legend(handles=[median_patch, mean_patch, std_patch])
 plt.grid()
-plt.ylabel('Execution Time [ms]')
 
 
 # Fourth subplot
@@ -102,7 +116,8 @@ std_patch = plt.Line2D([0, 0], [0, 1], marker='o', color='red', linewidth=1, lin
 plt.title("Backoff Test And Test And Set algorithm")
 plt.xticks(np.arange(1, len(nbThreads) + 1), nbThreads)
 plt.xlabel('Number of Threads []')
-plt.ylim(bottom=0, top=100)
+plt.ylabel('Execution Time [{}]'.format(unit_time))
+plt.ylim(bottom=0)
 plt.legend(handles=[median_patch, mean_patch, std_patch])
 plt.grid()
 

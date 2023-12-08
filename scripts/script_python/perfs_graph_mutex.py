@@ -39,6 +39,8 @@ std_patch = plt.Line2D([0, 0], [0, 1], marker='o', color='red', linewidth=1, lin
 
 plt.title("Test And Set algorithm")
 plt.xticks(np.arange(1, len(nbThreads) + 1), nbThreads)
+plt.xlabel('Number of Threads []')
+plt.ylabel('Execution Time [ms]')
 plt.ylim(0)
 plt.legend(handles=[median_patch, mean_patch, std_patch])
 plt.grid()
@@ -58,10 +60,11 @@ std_patch = plt.Line2D([0, 0], [0, 1], marker='o', color='red', linewidth=1, lin
 
 plt.title("Test And Test And Set algorithm")
 plt.xticks(np.arange(1, len(nbThreads) + 1), nbThreads)
+plt.xlabel('Number of Threads []')
+plt.ylabel('Execution Time [ms]')
 plt.ylim(0)
 plt.legend(handles=[median_patch, mean_patch, std_patch])
 plt.grid()
-plt.ylabel('Execution Time [ms]')
 
 
 # Third subplot
@@ -79,11 +82,12 @@ std_patch = plt.Line2D([0, 0], [0, 1], marker='o', color='red', linewidth=1, lin
 plt.title("Backoff Test And Test And Set algorithm")
 plt.xticks(np.arange(1, len(nbThreads) + 1), nbThreads)
 plt.xlabel('Number of Threads []')
+plt.ylabel('Execution Time [ms]')
 plt.ylim(bottom=0, top=100)
 plt.legend(handles=[median_patch, mean_patch, std_patch])
 plt.grid()
 
-plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1, hspace=0.3, wspace=0.3)
+plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1, hspace=0.4, wspace=0.4)
 plt.suptitle("Time Performance Metric [main_my_mutex.c] vs. Number of Threads")
 
 plt.savefig("graphs/png/perfs_graph_mutex.png")
