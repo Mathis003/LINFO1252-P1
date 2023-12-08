@@ -2,7 +2,6 @@
 #define MAIN_MY_MUTEX_H
 
 #include <stdlib.h>
-#include <pthread.h>
 
 #include "user_defined_sync.h"
 

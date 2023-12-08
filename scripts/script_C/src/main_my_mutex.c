@@ -5,7 +5,7 @@ void process(void)
     for (int i = 0; i < 10000; i++);
 }
 
-void *thread_function(void *arg)
+void *thread_function(void *unused)
 {
     for (int i = 0; i < 6400 / NB_THREADS; i++)
     {

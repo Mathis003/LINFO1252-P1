@@ -149,8 +149,11 @@ run_main_my_mutex_BTTS: build_main_my_mutex_BTTS
 
 csv: csv_reader_writer csv_main_my_mutex csv_producer_consumer csv_philosopher
 
+one_arg_main_my_mutex_%:
+	@bash $(BASH_DIR)/perfs_one_arg.sh $(BIN_DIR)/main_my_mutex_$*.bin $(CSV_DIR)/perfs_main_my_mutex_$*.csv 0
+
 one_arg_%:
-	@bash $(BASH_DIR)/perfs_one_arg.sh $(BIN_DIR)/$*.bin $(CSV_DIR)/perfs_$*.csv
+	@bash $(BASH_DIR)/perfs_one_arg.sh $(BIN_DIR)/$*.bin $(CSV_DIR)/perfs_$*.csv 1
 
 two_args_%:
 	@bash $(BASH_DIR)/perfs_two_args.sh $(BIN_DIR)/$*.bin $(CSV_DIR)/perfs_$*.csv

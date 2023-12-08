@@ -1,13 +1,17 @@
 #!/bin/bash
 
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <executable.bin> <file.csv>"
+if [ "$#" -ne 3 ]; then
+    echo "Usage: $0 <executable.bin> <name_file.csv> <nb_threads_equal_to_1_accepted>"
     exit 1
 fi
 
 NB_TIMES=5
 SEQ_NB_THREADS=(2 4 8 16 32 64)
 TIMES=()
+
+if [ "$3" -eq 0 ]; then
+    SEQ_NB_THREADS=(1 2 4 8 16 32 64)
+fi
 
 EXEC_NAME="$1"
 CSV_FILE="$2"
