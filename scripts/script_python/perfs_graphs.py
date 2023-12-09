@@ -37,10 +37,10 @@ else:
 
 colors = ['lightblue', 'lightgreen', 'lightpink', '#ff9999', '#99ff99', '#ffcc99', '#c2c2f0', '#ffb3e6']
 
-plt.figure(figsize=(12, 12))
+plt.figure(figsize=(10, 12))
 
 # First subplot
-plt.subplot(2, 2, 1)
+plt.subplot(1, 4, 1)
 
 boxplot = plt.boxplot(datas[0], vert=True, meanline=True, showmeans=True, patch_artist=True)
 plt.errorbar(range(1, len(nbThreads) + 1), means[0], yerr=std_devs[0], fmt='ro', markersize=2, label='Standard deviation')
@@ -60,7 +60,7 @@ plt.legend(handles=[median_patch, mean_patch, std_patch])
 plt.grid()
 
 # Second subplot
-plt.subplot(2, 2, 2)
+plt.subplot(1, 4, 2)
 
 boxplot = plt.boxplot(datas[1], vert=True, meanline=True, showmeans=True, patch_artist=True)
 plt.errorbar(range(1, len(nbThreads) + 1), means[1], yerr=std_devs[1], fmt='ro', markersize=2, label='Standard deviation')
@@ -81,7 +81,7 @@ plt.grid()
 
 
 # Third subplot
-plt.subplot(2, 2, 3)
+plt.subplot(1, 4, 3)
 
 boxplot = plt.boxplot(datas[2], vert=True, meanline=True, showmeans=True, patch_artist=True)
 plt.errorbar(range(1, len(nbThreads) + 1), means[2], yerr=std_devs[2], fmt='ro', markersize=2, label='Standard deviation')
@@ -102,7 +102,7 @@ plt.grid()
 
 
 # Fourth subplot
-plt.subplot(2, 2, 4)
+plt.subplot(1, 4, 4)
 
 boxplot = plt.boxplot(datas[3], vert=True, meanline=True, showmeans=True, patch_artist=True)
 plt.errorbar(range(1, len(nbThreads) + 1), means[3], yerr=std_devs[3], fmt='ro', markersize=2, label='Standard deviation')
@@ -121,9 +121,8 @@ plt.ylim(bottom=0)
 plt.legend(handles=[median_patch, mean_patch, std_patch])
 plt.grid()
 
-
-plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1, hspace=0.3, wspace=0.3)
-plt.suptitle("Time Performance Metric [{}.c] vs. Number of Threads".format(name_file))
+plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.1, hspace=0.6, wspace=0.6)
+plt.suptitle("Time Performance Metric [main_my_mutex.c] vs. Number of Threads")
 
 plt.savefig("graphs/png/perfs_graph_{}.png".format(name_file))
 plt.savefig("graphs/pdf/perfs_graph_{}.pdf".format(name_file))
