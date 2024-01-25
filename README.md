@@ -2,7 +2,7 @@
 
 ### Project Objectives
 
-Welcome to the project repository for the LINFO1252 course at UCL, part of the Civil Engineering program in the field of computer science.
+Welcome to the project repository for the LINFO1252 course at UCLouvain, part of the Civil Engineering program in the field of computer science.
 The primary goal of the project was to analyze the performance of multithreaded solutions to three classical problems (the `Reader-Writer` problem, the `Dining Philosophers` problem, and the `Producer-Consumer` problem), shedding light on the effectiveness and efficiency of different synchronization mechanisms. The three chosen problems are recognized challenges in concurrent programming, serving as benchmarks for evaluating the performance of synchronization primitives.
 
 ### Project Details
