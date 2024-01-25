@@ -74,4 +74,4 @@ For the run commands in the Makefile, you can specify the number of threads usin
 Contributions, feedback, and suggestions are welcomed. Feel free to share your thoughts and improvements.
 
 ---
-*This project is a part of the LINFO1252 course at UCL in the Civil Engineering program, focusing on computer science.*
+*This project is a part of the LINFO1252 course at UCLouvain in the Civil Engineering program, focusing on computer science.*
