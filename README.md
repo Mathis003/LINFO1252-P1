@@ -3,11 +3,11 @@
 ### Project Objectives
 
 Welcome to the project repository for the LINFO1252 course at UCL, part of the Civil Engineering program in the field of computer science.
-The primary goal of the project was to analyze the performance of multithreaded solutions to these classical problems, shedding light on the effectiveness and efficiency of different synchronization mechanisms. The three chosen problems (the `Reader-Writer` problem, the `Dining Philosophers` problem, and the `Producer-Consumer` problem) are recognized challenges in concurrent programming, serving as benchmarks for evaluating the performance of synchronization primitives.
+The primary goal of the project was to analyze the performance of multithreaded solutions to three classical problems (the `Reader-Writer` problem, the `Dining Philosophers` problem, and the `Producer-Consumer` problem), shedding light on the effectiveness and efficiency of different synchronization mechanisms. The three chosen problems are recognized challenges in concurrent programming, serving as benchmarks for evaluating the performance of synchronization primitives.
 
 ### Project Details
 - **Grade and Feedback:** 20/20, with comments on Makefile and presentation.
-- **Course:** LINFO1252, UCL Engineering program, Computer Science track.
+- **Course:** LINFO1252, UCLouvain Engineering program, Computer Science track.
 
 ## Feedback
 The Makefile was functional but could have been simplified, the presentation lacked clarity in comparison graphs, and the analysis suggested more depth, especially regarding the expected curves and the plateau effect in reader/writer scenarios.
@@ -24,18 +24,12 @@ The project leveraged various synchronization primitives, including:
 
 - **POSIX (Portable Operating System Interface):** A family of standards ensuring compatibility between operating systems. In the project, POSIX synchronization primitives, such as pthread_mutex, pthread_rwlock, and semaphores, played a pivotal role in achieving thread safety and coordination.
 
-### Multithreaded Analysis
-
-The chosen synchronization primitives were implemented and evaluated within the context of the three classical concurrent programming problems. Performance metrics, such as throughput, response time, and scalability, were analyzed to assess the effectiveness of different synchronization mechanisms in diverse scenarios.
-
-This detailed exploration of synchronization primitives and their application in multithreaded analysis contributes valuable insights into concurrent programming paradigms, providing a foundation for understanding the trade-offs and considerations when designing concurrent systems.
-
 ## Structure
 
 - **Scripts:**
   - `script_bash`: Contains Bash scripts used for performance analysis of the three well-known problems.
   - `script_python`: Includes scripts for creating comparison graphs using Matplotlib.
-  - `script_c`: Houses all C programs [details in this section](#c-code).
+  - `script_c`: Houses all C programs ([details in this section](#c-code)).
 
 - **Project Documents:**
   - `P1-Guidelines.pdf`: Assignment guidelines.
@@ -45,7 +39,7 @@ This detailed exploration of synchronization primitives and their application in
   - `.gitignore`: Specifies files to be ignored in the GitHub repository.
 
 - **Project Management:**
-  - `Makefile`: Automates build, run, and other project commands [details in this section](#makefile-commands).
+  - `Makefile`: Automates build, run, and other project commands ([details in this section](#makefile-commands)).
 
 - **Results and Visualization:**
   - `graphs`: Contains comparison graphs in PNG and PDF formats.
@@ -56,7 +50,7 @@ This detailed exploration of synchronization primitives and their application in
 - **Mutex and Semaphores:**
   - `my_mutex.c`: Implementation of custom mutex.
   - `my_sem.c`: Implementation of custom semaphore.
-  - `user_defined_sync.c`: Program defining mutexes and semaphores based on user input (TS, TTS, BTTS, or POSIX).
+  - `user_defined_sync.c`: Program defining mutexes and semaphores based on user input.
   - `main_my_mutex.c`: Program analyzing the overhead of wait primitives (custom mutex).
 
 - **Three Well-Known Problems:**
@@ -73,7 +67,7 @@ This detailed exploration of synchronization primitives and their application in
 - `make clean`: Clean generated files for a specific program.
 - `make clean_all`: Clean all generated files.
 
-There are also more specific commands for each individual problem such that `make run_reader_writer`, `make plot_philosopher`,... 
+For the run commands in the Makefile, you can specify the number of threads using the option NB_THREADS=N, where N represents the desired number of threads (the default value is 1). Additionally, you can launch the programs with any synchronization mechanism by using examples such as run_philosopher_POSIX, run_philosopher_BTTS,...
 
 ## Contributions
 
