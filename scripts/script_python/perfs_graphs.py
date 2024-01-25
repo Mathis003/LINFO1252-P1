@@ -40,7 +40,7 @@ colors = ['lightblue', 'lightgreen', 'lightpink', '#ff9999', '#99ff99', '#ffcc99
 plt.figure(figsize=(10, 12))
 
 # First subplot
-plt.subplot(1, 4, 1)
+plt.subplot(4, 1, 1)
 
 boxplot = plt.boxplot(datas[0], vert=True, meanline=True, showmeans=True, patch_artist=True)
 plt.errorbar(range(1, len(nbThreads) + 1), means[0], yerr=std_devs[0], fmt='ro', markersize=2, label='Standard deviation')
@@ -60,7 +60,7 @@ plt.legend(handles=[median_patch, mean_patch, std_patch])
 plt.grid()
 
 # Second subplot
-plt.subplot(1, 4, 2)
+plt.subplot(4, 1, 2)
 
 boxplot = plt.boxplot(datas[1], vert=True, meanline=True, showmeans=True, patch_artist=True)
 plt.errorbar(range(1, len(nbThreads) + 1), means[1], yerr=std_devs[1], fmt='ro', markersize=2, label='Standard deviation')
@@ -81,7 +81,7 @@ plt.grid()
 
 
 # Third subplot
-plt.subplot(1, 4, 3)
+plt.subplot(4, 1, 3)
 
 boxplot = plt.boxplot(datas[2], vert=True, meanline=True, showmeans=True, patch_artist=True)
 plt.errorbar(range(1, len(nbThreads) + 1), means[2], yerr=std_devs[2], fmt='ro', markersize=2, label='Standard deviation')
@@ -102,7 +102,7 @@ plt.grid()
 
 
 # Fourth subplot
-plt.subplot(1, 4, 4)
+plt.subplot(4, 1, 4)
 
 boxplot = plt.boxplot(datas[3], vert=True, meanline=True, showmeans=True, patch_artist=True)
 plt.errorbar(range(1, len(nbThreads) + 1), means[3], yerr=std_devs[3], fmt='ro', markersize=2, label='Standard deviation')

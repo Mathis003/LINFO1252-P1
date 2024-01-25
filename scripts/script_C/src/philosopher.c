@@ -69,19 +69,11 @@ void *philosopher_function(void* arg)
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2)
-    {
-        perror("argc != 2");
-        return EXIT_FAILURE;
-    }
+    if (argc != 2) { perror("argc != 2"); return EXIT_FAILURE; }
 
     NB_PHILOSOPHERS = atoi(argv[1]);
 
-    if (NB_PHILOSOPHERS <= 1)
-    {
-        perror("NB_PHILOSOPHERS <= 1");
-        return EXIT_FAILURE;
-    }
+    if (NB_PHILOSOPHERS <= 1) { perror("NB_PHILOSOPHERS <= 1"); return EXIT_FAILURE; }
 
     pthread_t philosophers[NB_PHILOSOPHERS];
 

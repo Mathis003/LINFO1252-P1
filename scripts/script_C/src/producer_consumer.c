@@ -1,14 +1,8 @@
 #include "../headers/producer_consumer.h"
 
-void process(void)
-{
-    for (int i = 0; i < 10000; i++);
-}
+void process(void) { for (int i = 0; i < 10000; i++); }
 
-int produce(void)
-{
-    return INT16_MIN + rand() % (INT16_MAX - INT16_MIN + 1);
-}
+int produce(void) { return INT16_MIN + rand() % (INT16_MAX - INT16_MIN + 1); }
 
 void insert_item(int item)
 {
@@ -82,20 +76,12 @@ void *consumer(void *unused)
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3)
-    {
-        perror("argc != 3");
-        return EXIT_FAILURE;
-    }
+    if (argc != 3) { perror("argc != 3"); return EXIT_FAILURE; }
 
     const int nbConsumers = atoi(argv[1]);
     const int nbProducers = atoi(argv[2]);
 
-    if (nbConsumers < 1 || nbProducers < 1)
-    {
-        perror("0 Producer or 0 Consumer!");
-        return EXIT_FAILURE;
-    }
+    if (nbConsumers < 1 || nbProducers < 1) { perror("0 Producer or 0 Consumer!"); return EXIT_FAILURE; }
 
     pthread_t producers[nbProducers];
     pthread_t consumers[nbConsumers];
