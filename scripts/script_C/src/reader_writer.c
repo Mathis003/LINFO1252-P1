@@ -9,14 +9,12 @@ void read_database()
 {
     process();
     // printf("Reading...\n");
-    // printf("readsDone: %d, writesDone: %d\n", readsDone, writesDone);
 }
 
 void write_database()
 {
     process();
     // printf("Writing...\n");
-    // printf("readsDone: %d, writesDone: %d\n", readsDone, writesDone);
 }
 
 void *reader(void *unused)
@@ -118,12 +116,8 @@ int main(int argc, char *argv[])
     for (int i = 0; i < nbWriters; i++) pthread_create(&writers[i], NULL, writer, NULL);
     for (int i = 0; i < nbReaders; i++) pthread_create(&readers[i], NULL, reader, NULL);
 
-    // printf("Waiting for threads to finish...\n");
-
     for (int i = 0; i < nbWriters; i++) pthread_join(writers[i], NULL);
     for (int i = 0; i < nbReaders; i++) pthread_join(readers[i], NULL);
-
-    // printf("readsdone: %d, writesdone: %d\n", readsDone, writesDone);
 
     destroy_sem(&db_writer);
     destroy_sem(&db_reader);

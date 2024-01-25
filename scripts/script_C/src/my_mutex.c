@@ -1,15 +1,9 @@
 #include "../headers/my_mutex.h"
 
-void my_mutex_init(my_mutex_t *my_mutex)
-{
-    my_mutex->lock = 0;
-}
+void my_mutex_init(my_mutex_t *my_mutex) { my_mutex->lock = 0; }
 
 
-void my_mutex_destroy(my_mutex_t *my_mutex)
-{
-    my_mutex = NULL;
-}
+void my_mutex_destroy(my_mutex_t *my_mutex) { my_mutex = NULL; }
 
 
 void exch(volatile int *lock_value, int *result)

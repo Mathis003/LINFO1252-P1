@@ -37,7 +37,6 @@ void *producer(void *unused)
         insert_item(item);
 
         nbProductionsDone++;
-        // printf("nbProductionsDone : %d\n", nbProductionsDone);
 
         post_sem(&full);
         unlock_mutex(&mutex);
@@ -50,14 +49,12 @@ void *producer(void *unused)
 int remove_item()
 {
     idx_buffer--;
-    // int item = buffer[idx_buffer];
     // printf("remove : idx_buffer = %d\n", idx_buffer);
     return buffer[idx_buffer];
 }
 
 void *consumer(void *unused)
 {
-    // int item;
     while (1)
     {
         wait_sem(&full);
@@ -71,11 +68,9 @@ void *consumer(void *unused)
         }
         
         remove_item();
-        // item = remove_item();
         // printf("Consumed : %d\n", item);
 
         nbConsumeDone++;
-        // printf("nbConsumeDone : %d\n", nbConsumeDone);
 
         post_sem(&empty);
         unlock_mutex(&mutex);
@@ -118,9 +113,6 @@ int main(int argc, char *argv[])
     destroy_mutex(&mutex);
     destroy_sem(&empty);
     destroy_sem(&full);
-
-    // printf("nbConsumeDone = %d\n", nbConsumeDone);
-    // printf("nbProductionsDone = %d\n", nbProductionsDone);
 
     return EXIT_SUCCESS;
 }

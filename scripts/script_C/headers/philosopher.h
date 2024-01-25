@@ -9,8 +9,7 @@
 
 int NB_PHILOSOPHERS;
 
-typedef struct args_philosopher
-{
+typedef struct args_philosopher {
     int id;
     void *left_baguette;
     void *right_baguette;

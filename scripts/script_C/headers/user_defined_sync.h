@@ -1,6 +1,8 @@
 #ifndef USER_DEFINED_SYNC_H
 #define USER_DEFINED_SYNC_H
 
+#include <pthread.h>
+
 #ifdef POSIX
 #include <stddef.h>
 #include <semaphore.h>
@@ -8,8 +10,6 @@
 #include "my_mutex.h"
 #include "my_sem.h"
 #endif
-
-#include <pthread.h>
 
 int init_mutex(void *mutex);
 

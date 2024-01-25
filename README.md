@@ -1,5 +1,7 @@
 # LINFO1252_P1
 
+TODO
+
 Commande principale du Makefile :
 
 make : lance la commande "make build"
